@@ -31,9 +31,10 @@ class HelloWorld(Resource):
         db.session.add(test_col)
         db.session.commit()
         returned_col = TestTable.query.get_or_404(rand_int)
+        print(f'returned_col: {returned_col}')
         return {
             'hello': 'world',
-            'test_col': returned_col,
+            'id': returned_col.id,
             'created_at': returned_col.created_at
         }
 

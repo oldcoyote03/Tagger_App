@@ -16,7 +16,9 @@ api = Api(app)
 
 class TestTable(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    created_at = db.Column(db.DateTime(timezone=True),
+    """created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())"""
+    created_at = db.Column(db.Date(timezone=True),
                            server_default=func.now())
 
     def __repr__(self):

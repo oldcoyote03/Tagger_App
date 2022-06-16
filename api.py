@@ -6,7 +6,8 @@ from flask_restful import Resource, Api
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 
-f#rom sqlalchemy.sql import func
+#from sqlalchemy.sql import func
+from datetime import date
 
 from random import Random
 
@@ -23,7 +24,7 @@ class TestTable(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True)
     """created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())"""
-    created_at = db.Column(db.Date, server_default=db.Date.today())
+    created_at = db.Column(db.Date, server_default=date.today().isoformat())
 
     def __repr__(self):
         return f'<Test Table {self.id}>'
@@ -32,7 +33,7 @@ class TestTable(db.Model):
 
 class HelloWorld(Resource):
     def get(self):
-        test_col = TestTable(id=uuid.uuid4())
+        test_col = TestTable(id=str(uuid.uuid4()))
         db.session.add(test_col)
         db.session.commit()
         returned_col = TestTable.query.get_or_404(rand_int)

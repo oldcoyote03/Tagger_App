@@ -3,7 +3,11 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
 
-from sqlalchemy.sql import func
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
+
+f#rom sqlalchemy.sql import func
+
 from random import Random
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -15,9 +19,11 @@ db = SQLAlchemy(app)
 api = Api(app)
 
 class TestTable(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    created_at = db.Column(db.DateTime(timezone=True),
-                           server_default=func.now())
+    #id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True)
+    """created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())"""
+    created_at = db.Column(db.Date, server_default=db.Date.today())
 
     def __repr__(self):
         return f'<Test Table {self.id}>'
@@ -26,8 +32,7 @@ class TestTable(db.Model):
 
 class HelloWorld(Resource):
     def get(self):
-        rand_int = int(Random().random() * 10000)
-        test_col = TestTable(id=rand_int)
+        test_col = TestTable(id=uuid.uuid4())
         db.session.add(test_col)
         db.session.commit()
         returned_col = TestTable.query.get_or_404(rand_int)

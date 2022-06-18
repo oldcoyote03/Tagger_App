@@ -33,11 +33,14 @@ class TestTable(db.Model):
 
 class HelloWorld(Resource):
     def get(self):
-        test_col = TestTable(id=str(uuid.uuid4()))
+        #my_uuid = str(uuid.uuid4())
+        #test_col = TestTable(id=my_uuid)
+        my_uuid = uuid.uuid4()
+        test_col = TestTable(id=my_uuid)
         db.session.add(test_col)
         db.session.commit()
-        returned_col = TestTable.query.get_or_404(rand_int)
-        print(f'returned_col: {returned_col}')
+        returned_col = TestTable.query.get_or_404(my_uuid)
+        #print(f'returned_col: {returned_col.id}')
         return {
             'hello': 'world',
             'id': returned_col.id,

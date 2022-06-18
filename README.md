@@ -6,3 +6,8 @@ Test API with cURL
 ```
 curl -H "Content-Type: application/json" -X GET http://localhost:5000/hello
 ```
+
+Options for created_at field:
+1. In SQLAlchemy Column, use default=sqlalchemy.sql.func.current_date for injecting the date of the INSERT statement
+2. In the CREATE TABLE operation, use CURRENT_TIME() function. 
+Note: Since the CREATE TABLE operation occurs before the app is run, you cannot use the server_default=sqlalchemy.sql.func.current_date since this injects the CURRENT_DATE() function into the CREATE TABLE operation (which is done already).

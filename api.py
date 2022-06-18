@@ -20,11 +20,8 @@ db = SQLAlchemy(app)
 api = Api(app)
 
 class TestTable(db.Model):
-    #id = db.Column(db.Integer, primary_key=True)
     id = db.Column(UUID(as_uuid=True), primary_key=True)
-    """created_at = db.Column(db.DateTime(timezone=True),
-                           server_default=func.now())"""
-    created_at = db.Column(db.Date, server_default=date.today().isoformat())
+    created_at = db.Column(db.Date, default=date.today().isoformat())
 
     def __repr__(self):
         return f'<Test Table {self.id}>'
@@ -33,18 +30,15 @@ class TestTable(db.Model):
 
 class HelloWorld(Resource):
     def get(self):
-        #my_uuid = str(uuid.uuid4())
-        #test_col = TestTable(id=my_uuid)
         my_uuid = uuid.uuid4()
         test_col = TestTable(id=my_uuid)
         db.session.add(test_col)
         db.session.commit()
         returned_col = TestTable.query.get_or_404(my_uuid)
-        #print(f'returned_col: {returned_col.id}')
         return {
             'hello': 'world',
-            'id': returned_col.id,
-            'created_at': returned_col.created_at
+            'id': f'{returned_col.id}',
+            'created_at': f'{returned_col.created_at}'
         }
 
 api.add_resource(HelloWorld, '/hello')

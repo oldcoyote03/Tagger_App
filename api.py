@@ -2,6 +2,8 @@ import os
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
+from flask_marshmallow import Marshmallow
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -9,14 +11,13 @@ import uuid
 from sqlalchemy.sql import func
 from datetime import date
 
-from random import Random
-
-basedir = os.path.abspath(os.path.dirname(__file__))
+#basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config.from_object("settings")
 db = SQLAlchemy(app)
 api = Api(app)
+ma = Marshmallow(app)
 
 class TestTable(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True)
@@ -29,6 +30,12 @@ class TestTable(db.Model):
         return f'<Test Table {self.id}>'
 
 
+class TestTableSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = TestTable
+
+test_table_schema = TestTableSchema()
+
 class HelloWorld(Resource):
     def get(self):
         my_uuid = uuid.uuid4()
@@ -36,11 +43,8 @@ class HelloWorld(Resource):
         db.session.add(test_col)
         db.session.commit()
         returned_col = TestTable.query.get_or_404(my_uuid)
-        return {
-            'hello': 'world',
-            'id': f'{returned_col.id}',
-            'created_at': f'{returned_col.created_at}'
-        }
+        table_dump = test_table_schema.dump(returned_col)
+        return table_dump
 
 api.add_resource(HelloWorld, '/hello')
 

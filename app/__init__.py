@@ -3,7 +3,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from flask_marshmallow import Marshmallow
-from src.api import BookmarksResource
+from app.api import BookmarksResource
 
 db = SQLAlchemy()
 ma = Marshmallow()

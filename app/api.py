@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from schema import Bookmarks, BookmarksSchema
+from .schema import Bookmarks, BookmarksSchema
 import uuid
 
 bookmarks_schema = BookmarksSchema()

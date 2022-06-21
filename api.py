@@ -22,7 +22,7 @@ ma = Marshmallow(app)
 class TestTable(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True)
     created_at = db.Column(
-        db.Date, 
+        db.Date,
         default=func.current_date(type=db.Date,inherit_cache=False)
     )
 

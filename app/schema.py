@@ -1,14 +1,15 @@
 
-#from flask_sqlalchemy import SQLAlchemy
-#from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+
 from app import db, ma
 from sqlalchemy.dialects.postgresql import UUID
 
 from sqlalchemy.sql import func
 from datetime import date
 
-#db = SQLAlchemy()
-#ma = Marshmallow()
+db = SQLAlchemy()
+ma = Marshmallow()
 
 class Bookmarks(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True)

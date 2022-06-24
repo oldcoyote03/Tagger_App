@@ -1,12 +1,9 @@
 import os
-from flask import Flask, request
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 from flask_restful import Api
-from flask_marshmallow import Marshmallow
-from app.api import BookmarksResource
 
-db = SQLAlchemy()
-ma = Marshmallow()
+from app.schema import db, ma
+from app.api import BookmarksResource
 
 def create_app():
     app = Flask(__name__)

@@ -1,9 +1,7 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
 
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
-
-parser = reqparse.RequestParser()
 
 bookmark_schema = BookmarksSchema()
 bookmarks_schema = BookmarksSchema(many=True)

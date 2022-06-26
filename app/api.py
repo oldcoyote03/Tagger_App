@@ -15,10 +15,9 @@ class BookmarksResource(Resource):
         bookmark = Bookmarks(id=uuid.uuid4())
         db.session.add(bookmark)
         db.session.commit()
-        return dump_bookmark
+        return "post"
 
 class BookmarkResource(Resource):
-    def get(self):
-        returned_bookmark = Bookmarks.query.get_or_404(my_uuid)
+    def get(self, bookmark_id):
+        returned_bookmark = Bookmarks.query.get_or_404(bookmark_id)
         return bookmark_schema.dump(returned_bookmark)
-

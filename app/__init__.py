@@ -13,5 +13,5 @@ def create_app():
     with app.app_context():
         db.create_all()
     api.add_resource(BookmarksResource, '/bookmarks')
-    api.add_resource(BookmarksResource, '/bookmarks/<bookmark_id>')
+    api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
     return app

@@ -8,7 +8,7 @@ bookmarks_schema = BookmarksSchema(many=True)
 
 class BookmarksResource(Resource):
     def get(self):
-        all_bookmarks = Bookmarks.all()
+        all_bookmarks = Bookmarks.query.all()
         return bookmarks_schema.dump(all_bookmarks)
 
     def post(self):

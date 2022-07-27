@@ -20,12 +20,13 @@ class BookmarksResource(Resource):
             id=uuid.uuid4(),
             url=args['url']
         )
-        msg = "post"
+        msg = "undefined"
         try:
             db.session.add(bookmark)
             db.session.commit()
-        except Exception as e:
-            msg = e
+            msg = "post"
+        except IntegrityError:
+            msg = "Check URL. It may not be unique."
         return msg
 
 class BookmarkResource(Resource):

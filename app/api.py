@@ -26,7 +26,7 @@ class BookmarksResource(Resource):
             db.session.commit()
         except Exception as e:
             msg = e
-        return "post"
+        return msg
 
 class BookmarkResource(Resource):
     def get(self, bookmark_id):

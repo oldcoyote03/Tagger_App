@@ -20,8 +20,12 @@ class BookmarksResource(Resource):
             id=uuid.uuid4(),
             url=args['url']
         )
-        db.session.add(bookmark)
-        db.session.commit()
+        msg = "post"
+        try:
+            db.session.add(bookmark)
+            db.session.commit()
+        except Exception as e:
+            msg = e
         return "post"
 
 class BookmarkResource(Resource):

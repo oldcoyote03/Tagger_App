@@ -25,7 +25,7 @@ class BookmarksResource(Resource):
             db.session.add(bookmark)
             db.session.commit()
             msg = "post"
-        except db.IntegrityError:
+        except db.exc.IntegrityError:
             msg = "Check URL. It may not be unique."
         return msg
 

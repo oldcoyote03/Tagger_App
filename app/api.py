@@ -20,14 +20,9 @@ class BookmarksResource(Resource):
             id=uuid.uuid4(),
             url=args['url']
         )
-        msg = "undefined"
-        try:
-            db.session.add(bookmark)
-            db.session.commit()
-            msg = "post"
-        except:
-            msg = "Check URL. It may not be unique."
-        return msg
+        db.session.add(bookmark)
+        db.session.commit()
+        return "post"
 
 class BookmarkResource(Resource):
     def get(self, bookmark_id):

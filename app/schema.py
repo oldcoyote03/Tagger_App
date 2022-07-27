@@ -10,6 +10,7 @@ ma = Marshmallow()
 
 class Bookmarks(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True)
+    url = db.Column(db.String, nullable=False)
     created_at = db.Column(
         db.Date,
         server_default=func.current_date(type=db.Date,inherit_cache=False)

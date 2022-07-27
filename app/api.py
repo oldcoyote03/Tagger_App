@@ -8,7 +8,6 @@ bookmarks_schema = BookmarksSchema(many=True)
 
 bm_parser = reqparse.RequestParser()
 bm_parser.add_argument('url')
-bm_args = bm_parser.parse_args()
 
 class BookmarksResource(Resource):
     def get(self):
@@ -16,9 +15,10 @@ class BookmarksResource(Resource):
         return bookmarks_schema.dump(all_bookmarks)
 
     def post(self):
+        args = bm_parser.parse_args()
         bookmark = Bookmarks(
             id=uuid.uuid4(),
-            url=bm_args['url']
+            url=args['url']
         )
         db.session.add(bookmark)
         db.session.commit()

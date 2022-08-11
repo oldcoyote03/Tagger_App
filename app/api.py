@@ -28,6 +28,8 @@ class BookmarksResource(Resource):
             db.session.commit()
         except IntegrityError as ie:
             msg = "IntegrityError"
+        except:
+            msg = "Some error"
         return msg
 
 class BookmarkResource(Resource):

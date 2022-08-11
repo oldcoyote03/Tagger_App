@@ -29,7 +29,7 @@ class BookmarksResource(Resource):
         except IntegrityError:
             msg = 'IntegrityError: Bookmark {} may already exist.'.format(args['url'])
         except:
-            msg = "Some error"
+            msg = "Error"
         return msg
 
 class BookmarkResource(Resource):

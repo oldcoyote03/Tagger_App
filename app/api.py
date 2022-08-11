@@ -3,6 +3,8 @@ from flask_restful import Resource, reqparse
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
 
+from sqlalchemy.exc import IntegrityError
+
 bookmark_schema = BookmarksSchema()
 bookmarks_schema = BookmarksSchema(many=True)
 
@@ -20,9 +22,13 @@ class BookmarksResource(Resource):
             id=uuid.uuid4(),
             url=args['url']
         )
-        db.session.add(bookmark)
-        db.session.commit()
-        return "post"
+        msg = "post"
+        try:
+            db.session.add(bookmark)
+            db.session.commit()
+        except IntegrityError as ie:
+            msg = "IntegrityError"
+        return msg
 
 class BookmarkResource(Resource):
     def get(self, bookmark_id):

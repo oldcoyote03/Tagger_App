@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import Api
 
 from app.schema import db, ma
-from app.api import BookmarksResource
+from app.api import BookmarksResource, BookmarkResource
 
 def create_app():
     app = Flask(__name__)
@@ -13,4 +13,5 @@ def create_app():
     with app.app_context():
         db.create_all()
     api.add_resource(BookmarksResource, '/bookmarks')
+    api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
     return app

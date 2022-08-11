@@ -27,7 +27,8 @@ class BookmarksResource(Resource):
             db.session.add(bookmark)
             db.session.commit()
         except IntegrityError as ie:
-            msg = f"IntegrityError: Bookmark '{}' may already exist: {}".format(args['url'], ie)
+            #msg = f"IntegrityError: Bookmark '{}' may already exist: {}".format(args['url'], ie)
+            msg = "IntegrityError: Bookmark may already exist"
         except:
             msg = "Some error"
         return msg

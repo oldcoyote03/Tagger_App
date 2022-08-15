@@ -22,6 +22,7 @@ global URL = "https://www.imdb.com"
 global BOOKMARK = "INITIAL"
 
 def test_post_bookmarks(client):
+    global URL
     payload = { "url": URL }
     response = client.post('/bookmarks', json=payload)
     assert response.status_code == 200

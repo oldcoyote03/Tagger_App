@@ -20,6 +20,7 @@ def test_endpoint(client):
 
 def test_post_bookmarks(client):
     global URL
+    URL = "https://www.imdb.com"
     payload = { "url": URL }
     response = client.post('/bookmarks', json=payload)
     assert response.status_code == 200

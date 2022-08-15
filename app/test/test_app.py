@@ -45,8 +45,7 @@ def test_get_bookmark(client):
     global BOOKMARK
     print('SINGLE - type BOOKMARK: {}'.format(type(BOOKMARK)))
     print('SINGLE - BOOKMARK: {}'.format(BOOKMARK))
-    assert True
-    """response = client.get('/bookmarks/{}'.format(BOOKMARK['id']))
+    response = client.get('/bookmarks/{}'.format(BOOKMARK['id']))
     assert response.status_code == 200
 
     data = response.get_data()
@@ -54,5 +53,5 @@ def test_get_bookmark(client):
     assert 'id' in data_obj
     assert 'created_at' in data_obj
     assert 'url' in data_obj
-    assert URL == data_obj['url']"""
+    assert URL == data_obj['url']
 

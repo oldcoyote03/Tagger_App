@@ -19,6 +19,7 @@ def test_endpoint(client):
     assert data_obj['msg'] == "This is the test endpoint"
 
 URL = "https://www.imdb.com"
+BOOKMARK = ""
 
 def test_post_bookmarks(client):
     payload = { "url": URL }

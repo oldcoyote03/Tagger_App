@@ -18,8 +18,10 @@ def test_endpoint(client):
     assert 'msg' in data_obj
     assert data_obj['msg'] == "This is the test endpoint"
 
+URL = "https://www.imdb.com"
+
 def test_post_bookmarks(client):
-    payload = { "url": "https://www.imdb.com" }
+    payload = { "url": URL }
     response = client.post('/bookmarks', json=payload)
     assert response.status_code == 200
 
@@ -33,3 +35,17 @@ def test_get_bookmarks(client):
     data = response.get_data()
     data_obj = json.loads(data)
     assert len(data_obj) == 1
+    BOOKMARK = data_obj[0]
+    assert 'id' in BOOKMARK
+
+def test_get_bookmark(client):
+    response = client.get('/bookmarks/{}'.format(BOOKMARK['id']))
+    assert response.status_code == 200
+
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert 'id' in data_obj
+    assert 'created_at' in data_obj
+    assert 'url' in data_obj
+    assert URL == data_obj['url']
+

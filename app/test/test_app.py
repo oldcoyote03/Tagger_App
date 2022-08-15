@@ -18,8 +18,8 @@ def test_endpoint(client):
     assert 'msg' in data_obj
     assert data_obj['msg'] == "This is the test endpoint"
 
-URL = "https://www.imdb.com"
-BOOKMARK = "INITIAL"
+global URL = "https://www.imdb.com"
+global BOOKMARK = "INITIAL"
 
 def test_post_bookmarks(client):
     payload = { "url": URL }
@@ -36,12 +36,14 @@ def test_get_bookmarks(client):
     data = response.get_data()
     data_obj = json.loads(data)
     assert len(data_obj) == 1
+    global BOOKMARK
     BOOKMARK = data_obj[0]
     assert 'id' in BOOKMARK
     print('MULTI - type BOOKMARK: {}'.format(type(BOOKMARK)))
     print('MULTI - BOOKMARK: {}'.format(BOOKMARK))
 
 def test_get_bookmark(client):
+    global BOOKMARK
     print('SINGLE - type BOOKMARK: {}'.format(type(BOOKMARK)))
     print('SINGLE - BOOKMARK: {}'.format(BOOKMARK))
     assert True

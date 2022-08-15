@@ -24,7 +24,7 @@ def test_post_bookmarks(client):
     assert response.status_code == 200
 
     data = response.get_data()
-    assert data == "post"
+    assert data == b'"post"\n'
 
 def test_get_bookmarks(client):
     response = client.get('/bookmarks')
@@ -32,4 +32,4 @@ def test_get_bookmarks(client):
 
     data = response.get_data()
     data_obj = json.loads(data)
-    assert len(data_obj) == 0
+    assert len(data_obj) == 1

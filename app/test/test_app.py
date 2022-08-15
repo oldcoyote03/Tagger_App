@@ -13,6 +13,6 @@ def test_endpoint(client):
 
     data = response.get_data()
     data_obj = json.loads(data)
-    assert data_obj.has_key('msg')
+    assert 'msg' in data_obj
     assert data_obj['msg'] == "This is the test endpoint"
     

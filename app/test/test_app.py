@@ -16,7 +16,7 @@ def test_post_bookmarks(client):
     URL = "https://www.imdb.com"
     payload = { "url": URL }
     response = client.post(url_for(
-        'bookmarks', 
+        'bookmarksresource', 
         json=payload
     ))
     assert response.status_code == 200
@@ -25,7 +25,7 @@ def test_post_bookmarks(client):
     assert data == b'"post"\n'
 
 def test_get_bookmarks(client):
-    response = client.get(url_for('bookmarks'))
+    response = client.get(url_for('bookmarksresource'))
     assert response.status_code == 200
 
     data = response.get_data()

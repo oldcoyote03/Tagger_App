@@ -38,13 +38,9 @@ def test_get_bookmarks(client):
     global BOOKMARK
     BOOKMARK = data_obj[0]
     assert 'id' in BOOKMARK
-    print('MULTI - type BOOKMARK: {}'.format(type(BOOKMARK)))
-    print('MULTI - BOOKMARK: {}'.format(BOOKMARK))
-
+    
 def test_get_bookmark(client):
     global BOOKMARK
-    print('SINGLE - type BOOKMARK: {}'.format(type(BOOKMARK)))
-    print('SINGLE - BOOKMARK: {}'.format(BOOKMARK))
     response = client.get('/bookmarks/{}'.format(BOOKMARK['id']))
     assert response.status_code == 200
 

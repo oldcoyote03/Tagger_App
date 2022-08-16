@@ -43,7 +43,7 @@ class BookmarkResource(Resource):
         bookmark = Bookmarks.query.get_or_404(bookmark_id)
         db.session.delete(bookmark)
         db.session.commit()
-        return 'delete /{}'.format(bookmark_id), 204
+        return { 'msg': 'delete /{}'.format(bookmark_id), 204 }
 
 
 from flask import jsonify

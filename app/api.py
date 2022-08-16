@@ -36,3 +36,10 @@ class BookmarkResource(Resource):
     def get(self, bookmark_id):
         returned_bookmark = Bookmarks.query.get_or_404(bookmark_id)
         return bookmark_schema.dump(returned_bookmark)
+
+
+from flask import jsonify
+class TestResource(Resource):
+    def get(self):
+        output = { "msg": "This is the test endpoint" }
+        return jsonify(output)

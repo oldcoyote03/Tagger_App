@@ -3,7 +3,6 @@ from flask import url_for
 import json
 
 def test_endpoint(client):
-    #response = client.get('/test')
     response = client.get(url_for('testresource'))
     assert response.status_code == 200
 
@@ -16,14 +15,17 @@ def test_post_bookmarks(client):
     global URL
     URL = "https://www.imdb.com"
     payload = { "url": URL }
-    response = client.post('/bookmarks', json=payload)
+    response = client.post(url_for(
+        'bookmarks', 
+        json=payload
+    ))
     assert response.status_code == 200
 
     data = response.get_data()
     assert data == b'"post"\n'
 
 def test_get_bookmarks(client):
-    response = client.get('/bookmarks')
+    response = client.get(url_for('bookmarks'))
     assert response.status_code == 200
 
     data = response.get_data()
@@ -35,12 +37,10 @@ def test_get_bookmarks(client):
     
 def test_get_bookmark(client):
     global BOOKMARK
-    #response = client.get('/bookmarks/{}'.format(BOOKMARK['id']))
     response = client.get(url_for(
         'bookmarkresource', 
-        bookmark_id=BOOKMARK['id'])
-    )
-    
+        bookmark_id=BOOKMARK['id']
+    ))    
     assert response.status_code == 200
 
     data = response.get_data()

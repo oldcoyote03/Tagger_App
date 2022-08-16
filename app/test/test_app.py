@@ -1,5 +1,4 @@
 
-from app import api
 from flask import url_for
 import json
 
@@ -36,7 +35,9 @@ def test_get_bookmarks(client):
     
 def test_get_bookmark(client):
     global BOOKMARK
-    response = client.get('/bookmarks/{}'.format(BOOKMARK['id']))
+    #response = client.get('/bookmarks/{}'.format(BOOKMARK['id']))
+    response = client.get(url_for('bookmarkresource') + BOOKMARK['id'])
+    
     assert response.status_code == 200
 
     data = response.get_data()

@@ -5,7 +5,7 @@ import json
 
 def test_endpoint(client):
     #response = client.get('/test')
-    response = client.get(url_for('api.testresource'))
+    response = client.get(url_for('testresource'))
     assert response.status_code == 200
 
     data = response.get_data()

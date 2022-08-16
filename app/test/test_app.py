@@ -36,7 +36,7 @@ def test_get_bookmarks(client):
 def test_get_bookmark(client):
     global BOOKMARK
     #response = client.get('/bookmarks/{}'.format(BOOKMARK['id']))
-    response = client.get(url_for('bookmarkresource') + BOOKMARK['id'])
+    response = client.get(url_for('bookmarkresource', 'bookmark_id'))
     
     assert response.status_code == 200
 

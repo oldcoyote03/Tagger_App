@@ -1,16 +1,10 @@
 
+from app import api
 import json
 
-"""
-def test_always_passes():
-    assert True
-
-def test_always_fails():
-    assert False
-"""
-
 def test_endpoint(client):
-    response = client.get('/test')
+    #response = client.get('/test')
+    response = client.get(url_for('api.TestResource'))
     assert response.status_code == 200
 
     data = response.get_data()

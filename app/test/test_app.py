@@ -57,7 +57,9 @@ def test_delete_bookmark(client):
         'bookmarkresource',
         bookmark_id=BOOKMARK['id']
     ))
-    #assert response.status_code == 204
-    data = response.get_data()
-    data_str = data.decode()
-    assert data_str == 'delete /{}'.format(BOOKMARK['id'])
+    assert response.status_code == 204
+    response = client.get(url_for(
+        'bookmarkresource', 
+        bookmark_id=BOOKMARK['id']
+    ))    
+    assert response.status_code == 404

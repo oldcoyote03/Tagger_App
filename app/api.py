@@ -22,20 +22,28 @@ class BookmarksResource(Resource):
             id=uuid.uuid4(),
             url=args['url']
         )
-        msg = "post"
+        msg = 'post'
         try:
             db.session.add(bookmark)
             db.session.commit()
         except IntegrityError:
             msg = 'IntegrityError: Bookmark {} may already exist.'.format(args['url'])
         except:
-            msg = "Error"
+            msg = 'Error'
         return msg
 
+
 class BookmarkResource(Resource):
+
     def get(self, bookmark_id):
-        returned_bookmark = Bookmarks.query.get_or_404(bookmark_id)
-        return bookmark_schema.dump(returned_bookmark)
+        bookmark = Bookmarks.query.get_or_404(bookmark_id)
+        return bookmark_schema.dump(bookmark)
+    
+    def delete(self, bookmark_id):
+        bookmark = Bookmarks.query.get_or_404(bookmark_id)
+        db.session.delete(bookmark)
+        db.session.delete(bookmark)
+        return 'delete /{}'.format(bookmark_id), 204
 
 
 from flask import jsonify

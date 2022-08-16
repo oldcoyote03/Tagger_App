@@ -20,7 +20,6 @@ def test_post_bookmarks(client):
         json=payload
     )
     assert response.status_code == 200
-
     data = response.get_data()
     assert data == b'"post"\n'
 
@@ -51,3 +50,12 @@ def test_get_bookmark(client):
     global URL
     assert URL == data_obj['url']
 
+def test_delete_bookmark(client):
+    global BOOKMARK
+    response = client.delete(url_for(
+        'bookmarkresource',
+        bookmark_id=BOOKMARK['id']
+    ))
+    assert response.status_code == 204
+    data = response.get_data()
+    assert data == b'"delete /{}"'.format(bookmark_id)

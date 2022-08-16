@@ -21,7 +21,8 @@ def test_post_bookmarks(client):
     )
     assert response.status_code == 200
     data = response.get_data()
-    assert data == b'"post"\n'
+    data_str = data.decode()
+    assert data_str == "post"
 
 def test_get_bookmarks(client):
     response = client.get(url_for('bookmarksresource'))
@@ -58,4 +59,5 @@ def test_delete_bookmark(client):
     ))
     assert response.status_code == 204
     data = response.get_data()
-    assert data == b'"delete /{}"'.format(bookmark_id)
+    data_str = data.decode()
+    assert data == 'delete /{}'.format(BOOKMARK['id'])

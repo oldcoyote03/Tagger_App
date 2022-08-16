@@ -42,7 +42,7 @@ class BookmarkResource(Resource):
     def delete(self, bookmark_id):
         bookmark = Bookmarks.query.get_or_404(bookmark_id)
         db.session.delete(bookmark)
-        db.session.delete(bookmark)
+        db.session.commit()
         return 'delete /{}'.format(bookmark_id), 204
 
 

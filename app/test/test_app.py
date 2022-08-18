@@ -12,6 +12,14 @@ def test_endpoint(client):
     assert 'msg' in data_obj
     assert data_obj['msg'] == "This is the test endpoint"
 
+def valid_uuid(s):
+    try:
+        parsed_data = s.split('"')[1]
+        uuid.UUID(parsed_data)
+        return True
+    except:
+        return False
+
 def test_post_bookmarks(client):
     global URL
     URL = "https://www.imdb.com"
@@ -23,12 +31,7 @@ def test_post_bookmarks(client):
     assert response.status_code == 200
     data = response.get_data()
     data_str = data.decode()
-    try:
-        parsed_data = data_str.split('"')[1]
-        uuid.UUID(parsed_data)
-        assert True
-    except:
-        assert False
+    assert valid_uuid(data_str)
 
 def test_get_bookmarks(client):
     response = client.get(url_for('bookmarksresource'))

@@ -100,6 +100,17 @@ def test_get_bookmark(client):
     global URL
     assert URL == data_obj['url']
 
+# cleanup DB with the last test
+def cleanup(client):
+    response = client.get(url_for('bookmarksresource'))
+    data = response.get_data()
+    data_obj = json.loads(data)
+    for bm in data_obj:
+        response = client.delete(url_for(
+            'bookmarkresource',
+            bookmark_id=bm['id']
+        ))
+
 def test_delete_bookmark(client):
     global BOOKMARK
     response = client.delete(url_for(
@@ -114,12 +125,4 @@ def test_delete_bookmark(client):
     ))    
     assert response.status_code == 404
 
-def cleanup(client):
-    response = client.get(url_for('bookmarksresource'))
-    data = response.get_data()
-    data_obj = json.loads(data)
-    for bm in data_obj:
-        response = client.delete(url_for(
-            'bookmarkresource',
-            bookmark_id=bm['id']
-        ))
+    cleanup(client)

@@ -22,15 +22,14 @@ class BookmarksResource(Resource):
             id=uuid.uuid4(),
             url=args['url']
         )
-        msg = 'post'
         try:
             db.session.add(bookmark)
             db.session.commit()
         except IntegrityError:
-            msg = 'IntegrityError: Bookmark {} may already exist.'.format(args['url'])
+            return 'IntegrityError: Bookmark {} may already exist.'.format(args['url']), 400
         except:
-            msg = 'Error'
-        return msg
+            return 'Error', 400
+        return 'post'
 
 
 class BookmarkResource(Resource):

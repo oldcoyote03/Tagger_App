@@ -22,7 +22,12 @@ def test_post_bookmarks(client):
     assert response.status_code == 200
     data = response.get_data()
     data_str = data.decode()
-    assert data_str == '"post"\n'
+    try:
+        parsed_data = data_str.split('"')[1]
+        uuid.UUID(parsed_data)
+        assert True
+    except:
+        assert False
 
 def test_get_bookmarks(client):
     response = client.get(url_for('bookmarksresource'))

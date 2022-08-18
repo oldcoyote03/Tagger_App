@@ -18,18 +18,19 @@ class BookmarksResource(Resource):
 
     def post(self):
         args = bm_parser.parse_args()
+        bm_id = uuid.uuid4()
         bookmark = Bookmarks(
-            id=uuid.uuid4(),
+            id=bm_id,
             url=args['url']
         )
         try:
             db.session.add(bookmark)
             db.session.commit()
         except IntegrityError:
-            return 'IntegrityError: Bookmark {} may already exist.'.format(args['url']), 400
+            return 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(args['url']), 400
         except:
-            return 'Error', 400
-        return 'post'
+            return 'Bad Request', 400
+        return bm_id
 
 
 class BookmarkResource(Resource):

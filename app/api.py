@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from flask import request
 
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
@@ -13,29 +14,41 @@ bm_parser.add_argument('url')
 
 class BookmarksResource(Resource):
     def get(self):
+        p_url = request.args.get('url', default="", type=str)
+        if p_url:
+            url_bms = Bookmarks.query.filter_by(url=p_url)
+            return bookmarks_schema.dump(url_bms)
         all_bookmarks = Bookmarks.query.all()
         return bookmarks_schema.dump(all_bookmarks)
 
     def post(self):
         args = bm_parser.parse_args()
+        bm_id = uuid.uuid4()
         bookmark = Bookmarks(
-            id=uuid.uuid4(),
+            id=bm_id,
             url=args['url']
         )
-        msg = "post"
         try:
             db.session.add(bookmark)
             db.session.commit()
         except IntegrityError:
-            msg = 'IntegrityError: Bookmark {} may already exist.'.format(args['url'])
+            return 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(args['url']), 400
         except:
-            msg = "Error"
-        return msg
+            return 'Bad Request', 400
+        return str(bm_id)
+
 
 class BookmarkResource(Resource):
+
     def get(self, bookmark_id):
-        returned_bookmark = Bookmarks.query.get_or_404(bookmark_id)
-        return bookmark_schema.dump(returned_bookmark)
+        bookmark = Bookmarks.query.get_or_404(bookmark_id)
+        return bookmark_schema.dump(bookmark)
+    
+    def delete(self, bookmark_id):
+        bookmark = Bookmarks.query.get_or_404(bookmark_id)
+        db.session.delete(bookmark)
+        db.session.commit()
+        return '', 204
 
 
 from flask import jsonify

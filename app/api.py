@@ -30,7 +30,7 @@ class BookmarksResource(Resource):
             return 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(args['url']), 400
         except:
             return 'Bad Request', 400
-        return bm_id
+        return str(bm_id)
 
 
 class BookmarkResource(Resource):

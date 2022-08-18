@@ -11,8 +11,12 @@ bookmarks_schema = BookmarksSchema(many=True)
 bm_parser = reqparse.RequestParser()
 bm_parser.add_argument('url')
 
+from flask import request 
 class BookmarksResource(Resource):
     def get(self):
+        page = request.args.get('page', default=1, type=int)
+        if page == 3:
+            return 'three'
         all_bookmarks = Bookmarks.query.all()
         return bookmarks_schema.dump(all_bookmarks)
 

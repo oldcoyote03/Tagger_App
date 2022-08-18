@@ -17,8 +17,8 @@ class BookmarksResource(Resource):
         url = request.args.get('url', default="", type=str)
         if url == 'test':
             return 'pass'
-        if url == '':
-            return 'broken'
+        if url != '':
+            return 'Bad Request: Invalid request parameter', 400
         all_bookmarks = Bookmarks.query.all()
         return bookmarks_schema.dump(all_bookmarks)
 

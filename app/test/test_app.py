@@ -1,6 +1,7 @@
 
 from flask import url_for
 import json
+import uuid
 
 def test_endpoint(client):
     response = client.get(url_for('testresource'))

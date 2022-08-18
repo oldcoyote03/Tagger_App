@@ -125,4 +125,5 @@ def test_delete_bookmark(client):
     ))    
     assert response.status_code == 404
 
+    # cleanup for entire suite
     cleanup(client)

@@ -31,8 +31,8 @@ class BookmarksResource(Resource):
         return bookmarks_schema.dump(all_bookmarks)
 
     @use_args(bookmarks_args, location="json")
-    def post(self):
-        args = bm_parser.parse_args()
+    def post(self, args):
+        #args = bm_parser.parse_args()
         bm_id = uuid.uuid4()
         bookmark = Bookmarks(
             id=bm_id,

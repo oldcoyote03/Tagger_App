@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from flask import request
 
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
@@ -11,12 +12,13 @@ bookmarks_schema = BookmarksSchema(many=True)
 bm_parser = reqparse.RequestParser()
 bm_parser.add_argument('url')
 
-from flask import request 
 class BookmarksResource(Resource):
     def get(self):
-        page = request.args.get('page', default=1, type=int)
-        if page == 3:
-            return 'three'
+        url = request.args.get('url', default="", type=str)
+        if url == 'test':
+            return 'pass'
+        if url == '':
+            return 'broken'
         all_bookmarks = Bookmarks.query.all()
         return bookmarks_schema.dump(all_bookmarks)
 

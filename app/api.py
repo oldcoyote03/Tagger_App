@@ -14,11 +14,10 @@ bm_parser.add_argument('url')
 
 class BookmarksResource(Resource):
     def get(self):
-        url = request.args.get('url', default="", type=str)
-        if url == 'test':
-            return 'pass'
-        if url != '':
-            return 'Bad Request: Invalid request parameter', 400
+        p_url = request.args.get('url', default="", type=str)
+        if p_url:
+            url_bms = Bookmarks.query.filter_by(url=p_url)
+            return bookmarks_schema.dump(url_bms)
         all_bookmarks = Bookmarks.query.all()
         return bookmarks_schema.dump(all_bookmarks)
 

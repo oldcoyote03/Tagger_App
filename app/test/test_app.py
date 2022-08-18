@@ -14,11 +14,15 @@ def test_endpoint(client):
 
 def valid_uuid(s):
     try:
-        parsed_data = s.split('"')[1]
-        uuid.UUID(parsed_data)
+        uuid.UUID(s)
         return True
     except:
         return False
+
+def parse_response_str(r):
+    data = r.get_data()
+    s = data.decode()
+    return s.split('"')[1]
 
 def test_post_bookmarks(client):
     global URL
@@ -29,9 +33,19 @@ def test_post_bookmarks(client):
         json=payload
     )
     assert response.status_code == 200
-    data = response.get_data()
-    data_str = data.decode()
-    assert valid_uuid(data_str)
+    data = parse_response_str(response)
+    assert valid_uuid(data)
+
+def test_post_bookmarks_duplicate(client):
+    global URL
+    payload = { "url": URL }
+    response = client.post(
+        url_for('bookmarksresource'),
+        json=payload
+    )
+    assert response.status_code == 400
+    data = parse_response_str(response)
+    assert 'IntegrityError' in data
 
 def test_get_bookmarks(client):
     response = client.get(url_for('bookmarksresource'))

@@ -1,5 +1,6 @@
-from flask_restful import Resource, reqparse
-from flask import request
+from flask_restful import Resource
+from webargs import fields
+from webargs.flaskparser import use_args
 
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
@@ -9,20 +10,25 @@ from sqlalchemy.exc import IntegrityError
 bookmark_schema = BookmarksSchema()
 bookmarks_schema = BookmarksSchema(many=True)
 
-bm_parser = reqparse.RequestParser()
-bm_parser.add_argument('url')
+bookmarks_json_args = {
+    'url': fields.String(required=True)
+}
+bookmarks_query_args = {
+    'url': fields.String(required=False)
+}
 
 class BookmarksResource(Resource):
-    def get(self):
-        p_url = request.args.get('url', default="", type=str)
-        if p_url:
-            url_bms = Bookmarks.query.filter_by(url=p_url)
+    
+    @use_args(bookmarks_query_args, location="query")
+    def get(self, args):
+        if 'url' in args:
+            url_bms = Bookmarks.query.filter_by(url=args['url'])
             return bookmarks_schema.dump(url_bms)
         all_bookmarks = Bookmarks.query.all()
         return bookmarks_schema.dump(all_bookmarks)
 
-    def post(self):
-        args = bm_parser.parse_args()
+    @use_args(bookmarks_json_args, location="json")
+    def post(self, args):
         bm_id = uuid.uuid4()
         bookmark = Bookmarks(
             id=bm_id,

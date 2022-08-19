@@ -24,7 +24,8 @@ class BookmarksResource(Resource):
     @use_args(bookmarks_query_args, location="query")
     def get(self, args):
         #p_url = request.args.get('url', default="", type=str)
-        if args['url']:
+        #if args['url']:
+        if 'url' in args:
             #url_bms = Bookmarks.query.filter_by(url=p_url)
             url_bms = Bookmarks.query.filter_by(url=args['url'])
             return bookmarks_schema.dump(url_bms)

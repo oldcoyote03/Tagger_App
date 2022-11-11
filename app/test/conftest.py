@@ -3,11 +3,10 @@ import pytest
 def pytest_addoption(parser):
     parser.addoption("--db-conn", action="store", default="False")
 
-"""
 @pytest.fixture(scope="session")
 def db_conn(pytestconfig):
     return pytestconfig.getoption("db-conn")
-"""
+
 
 ################
 # unit testing #

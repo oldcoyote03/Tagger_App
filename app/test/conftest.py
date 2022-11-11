@@ -1,5 +1,14 @@
 import pytest
 
+def pytest_addoption(parser):
+    parser.addoption("--db-conn", action="store", default="False")
+
+"""
+@pytest.fixture(scope="session")
+def db_conn(pytestconfig):
+    return pytestconfig.getoption("db-conn")
+"""
+
 ################
 # unit testing #
 ################
@@ -70,7 +79,8 @@ def mock_get_bookmark(mocker):
 
 from app import create_app
 
-@pytest.fixture
-def app():
-    app = create_app()
-    return app
+if pytestconfig.getoption('db-conn') == "True":
+    @pytest.fixture
+    def app():
+        app = create_app()
+        return app

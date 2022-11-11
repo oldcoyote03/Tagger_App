@@ -3,10 +3,11 @@ import pytest
 def pytest_addoption(parser):
     parser.addoption("--db-conn", action="store", default="False")
 
-@pytest.fixture(scope="session")
+"""
+@pytest.fixture
 def db_conn(pytestconfig):
     return pytestconfig.getoption("db-conn")
-
+"""
 
 ################
 # unit testing #
@@ -78,7 +79,8 @@ def mock_get_bookmark(mocker):
 
 from app import create_app
 
-if pytestconfig.getoption('db-conn') == "True":
+db_arg = request.config.getoption('--db-conn')
+if db_arg and db_arg == "True":
     @pytest.fixture
     def app():
         app = create_app()

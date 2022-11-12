@@ -2,7 +2,11 @@ import pytest
 
 def pytest_addoption(parser):
     parser.addoption('--add-conn', action='store', default='false')
-    
+
+@pytest.fixture
+def options(request):
+    yield request.config.option
+
 """
 @pytest.fixture
 def db_conn(pytestconfig):
@@ -79,7 +83,7 @@ def mock_get_bookmark(mocker):
 
 from app import create_app
 
-db_arg = pytest.config.getoption('--db-conn')
+db_arg = options.db-conn
 if db_arg and db_arg == "True":
     @pytest.fixture
     def app():

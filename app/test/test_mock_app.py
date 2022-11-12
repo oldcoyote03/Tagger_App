@@ -5,7 +5,7 @@ import json
 import uuid
 
 def test_endpoint(flask_app_mock):
-    with flask_app_mock..app_context():
+    with flask_app_mock.app_context():
         #response = flask_app_mock.get(url_for('testresource'))
         response = get(url_for('testresource'))
         assert response.status_code == 200

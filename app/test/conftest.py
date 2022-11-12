@@ -1,47 +1,42 @@
 import pytest
-
-def pytest_addoption(parser):
-    parser.addoption('--dbconn', action='store', default='false')
-
-@pytest.fixture
-def options(request):
-    yield request.config.option
-
-"""
-@pytest.fixture
-def db_conn(pytestconfig):
-    return pytestconfig.getoption("db-conn")
-"""
-
-################
-# unit testing #
-################
-
-import uuid
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from app.api import BookmarksResource, BookmarkResource, TestResource
-
+from app.api import TestResource
+#from app.api import BookmarksResource, BookmarkResource, TestResource
+from app import create_app
+#import uuid
 #from app.schema import Bookmarks
 #from app.schema import db, ma, Bookmarks, BookmarksSchema
 
-#def flask_app_mock():
+def pytest_addoption(parser):
+    parser.addoption('--dbconn', action='store', default='false')
 
-# mock flask app
+"""
 @pytest.fixture
-def app():
-    app_mock = Flask(__name__)
-    db = SQLAlchemy(app_mock)
-    db.init_app(app_mock)
-    api = Api(app_mock)
-    ma = Marshmallow(app_mock)
-    ma.init_app(app_mock)
-    api.add_resource(BookmarksResource, '/bookmarks')
-    api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
-    api.add_resource(TestResource, '/test')
-    return app_mock
+def options(request):
+    yield request.config.option
+"""
+
+@pytest.fixture
+def app(request):
+    test_app = None
+    if request.config.option.env == 'dev':
+        # mock app
+        test_app = Flask(__name__)
+        db = SQLAlchemy(test_app)
+        db.init_app(test_app)
+        api = Api(test_app)
+        ma = Marshmallow(test_app)
+        ma.init_app(test_app)
+        api.add_resource(TestResource, '/test')
+        #api.add_resource(BookmarksResource, '/bookmarks')
+        #api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
+    elif request.config.option.env == 'test':
+        # valid DB connection
+        test_app = create_app()
+    return test_app
 
 # mock db objects
 
@@ -76,19 +71,4 @@ def mock_get_sqlalchemy(mocker):
 @pytest.fixture
 def mock_get_bookmark(mocker):
     return mocker.patch("app.api.BookmarkResource.get")
-"""
-
-
-#######################
-# integration testing #
-#######################
-
-from app import create_app
-"""
-db_arg = request.config.option.dbconn
-if db_arg and db_arg == "True":
-    @pytest.fixture
-    def app():
-        app = create_app()
-        return app
 """

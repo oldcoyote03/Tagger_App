@@ -40,7 +40,6 @@ def app(request):
 
 # mock db objects
 
-"""
 @pytest.fixture
 def mock_bookmark_object():
     bookmark = Bookmarks(
@@ -49,6 +48,7 @@ def mock_bookmark_object():
     )
     return bookmark
 
+"""
 @pytest.fixture
 def mock_bookmarks_object():
     bookmarks = []
@@ -62,7 +62,6 @@ def mock_bookmarks_object():
 
 # mock actions
 
-"""
 @pytest.fixture
 def mock_get_sqlalchemy(mocker):
     mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value = mocker.Mock()
@@ -71,4 +70,3 @@ def mock_get_sqlalchemy(mocker):
 @pytest.fixture
 def mock_get_bookmark(mocker):
     return mocker.patch("app.api.BookmarkResource.get")
-"""

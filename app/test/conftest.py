@@ -27,9 +27,11 @@ from app.api import BookmarksResource, BookmarkResource, TestResource
 #from app.schema import Bookmarks
 #from app.schema import db, ma, Bookmarks, BookmarksSchema
 
+#def flask_app_mock():
+
 # mock flask app
 @pytest.fixture
-def flask_app_mock():
+def app():
     app_mock = Flask(__name__)
     db = SQLAlchemy(app_mock)
     db.init_app(app_mock)

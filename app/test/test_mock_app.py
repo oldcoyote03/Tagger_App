@@ -25,7 +25,7 @@ def test_get_bookmark(
         mock_get_sqlalchemy,
         mock_bookmark_object
 ):
-    mock_get_sqlalchemy.return_value = mock_bookmark_object
+    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
     response = client.get(url_for(
         'bookmarkresource', 
         bookmark_id=mock_bookmark_object.id

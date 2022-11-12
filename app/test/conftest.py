@@ -6,9 +6,10 @@ from flask_marshmallow import Marshmallow
 from app.api import TestResource, BookmarkResource
 #from app.api import BookmarksResource, BookmarkResource, TestResource
 from app import create_app
-import uuid
 from app.schema import Bookmarks
 #from app.schema import db, ma, Bookmarks, BookmarksSchema
+import uuid
+import datetime
 
 def pytest_addoption(parser):
     parser.addoption('--env', action='store', default='dev')
@@ -44,7 +45,8 @@ def app(request):
 def mock_bookmark_object():
     bookmark = Bookmarks(
         id=uuid.uuid4(),
-        url="https://www.foo.com"
+        url="https://www.foo.com",
+        created_at=datetime.date.today()
     )
     return bookmark
 

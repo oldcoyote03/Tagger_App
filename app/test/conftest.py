@@ -11,7 +11,7 @@ from app import create_app
 #from app.schema import db, ma, Bookmarks, BookmarksSchema
 
 def pytest_addoption(parser):
-    parser.addoption('--dbconn', action='store', default='false')
+    parser.addoption('--env', action='store', default='dev')
 
 """
 @pytest.fixture

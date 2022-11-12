@@ -82,10 +82,11 @@ def mock_get_bookmark(mocker):
 #######################
 
 from app import create_app
-
+"""
 db_arg = request.config.option.dbconn
 if db_arg and db_arg == "True":
     @pytest.fixture
     def app():
         app = create_app()
         return app
+"""

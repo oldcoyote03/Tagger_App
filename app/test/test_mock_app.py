@@ -49,13 +49,17 @@ def test_get_bookmark(
 def test_delete_bookmark(
         client,
         mock_get_sqlalchemy,
-        mock_session_sqlalchemy,
+        mock_sqlalchemy,
+        mock_create_scoped_session_sqlalchemy,
         mock_bookmark_object
 ):
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
-    mock_session_sqlalchemy.delete.return_value = None
-    mock_session_sqlalchemy.commit.return_value = None
+    mock_sqlalchemy.session.delete.return_value = None
+    mock_sqlalchemy.session.commit.return_value = None
+    #mock_session_sqlalchemy.delete.return_value = None
+    #mock_session_sqlalchemy.commit.return_value = None
+    mock_create_scoped_session_sqlalchemy.return_value = None
 
     # test with mock
     response = client.delete(url_for(

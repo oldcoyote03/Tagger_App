@@ -69,8 +69,13 @@ def mock_get_sqlalchemy(mocker):
     return mock
 
 @pytest.fixture
-def mock_session_sqlalchemy(mocker):
-    mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.session").return_value = mocker.Mock()
+def mock_sqlalchemy(mocker):
+    mock = mocker.patch("flask_sqlalchemy.SQLAlchemy").return_value = mocker.Mock()
+    return mock
+
+@pytest.fixture
+def mock_create_scoped_session_sqlalchemy(mocker):
+    mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.create_scoped_session").return_value = mocker.Mock()
     return mock
 
 """

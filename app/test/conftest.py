@@ -3,7 +3,8 @@ from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from app.api import TestResource, BookmarkResource, BookmarksResource
+from app.api import TestResource, BookmarkResource
+#from app.api import TestResource, BookmarkResource, BookmarksResource
 from app import create_app
 from app.schema import Bookmarks
 import uuid
@@ -31,7 +32,7 @@ def app(request):
         ma.init_app(test_app)
         api.add_resource(TestResource, '/test')
         api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
-        api.add_resource(BookmarksResource, '/bookmarks')
+        #api.add_resource(BookmarksResource, '/bookmarks')
     elif request.config.option.env == 'test':
         # valid DB connection
         test_app = create_app()

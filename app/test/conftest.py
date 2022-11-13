@@ -3,11 +3,9 @@ from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from app.api import TestResource, BookmarkResource
-#from app.api import BookmarksResource, BookmarkResource, TestResource
+from app.api import TestResource, BookmarkResource, BookmarksResource
 from app import create_app
 from app.schema import Bookmarks
-#from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
 import datetime
 
@@ -33,7 +31,7 @@ def app(request):
         ma.init_app(test_app)
         api.add_resource(TestResource, '/test')
         api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
-        #api.add_resource(BookmarksResource, '/bookmarks')
+        api.add_resource(BookmarksResource, '/bookmarks')
     elif request.config.option.env == 'test':
         # valid DB connection
         test_app = create_app()
@@ -68,6 +66,23 @@ def mock_bookmarks_object():
 def mock_get_sqlalchemy(mocker):
     mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value = mocker.Mock()
     return mock
+
+@pytest.fixture
+def mock_session_sqlalchemy(mocker):
+    mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.session").return_value = mocker.Mock()
+    return mock
+
+"""
+@pytest.fixture
+def mock_session_delete_sqlalchemy(mocker):
+    mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.session.delete").return_value = mocker.Mock()
+    return mock
+
+@pytest.fixture
+def mock_session_commit_sqlalchemy(mocker):
+    mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.session.commit").return_value = mocker.Mock()
+    return mock
+"""
 
 @pytest.fixture
 def mock_get_bookmark(mocker):

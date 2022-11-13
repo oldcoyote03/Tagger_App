@@ -13,6 +13,11 @@ def test_endpoint(client):
     assert 'msg' in data_obj
     assert data_obj['msg'] == "This is the test endpoint"
 
+def parse_response_str(r):
+    data = r.get_data()
+    s = data.decode()
+    return s.split('"')[1]
+
 def valid_uuid(s):
     try:
         uuid.UUID(s)
@@ -25,7 +30,10 @@ def test_get_bookmark(
         mock_get_sqlalchemy,
         mock_bookmark_object
 ):
+    # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
+    
+    # test with mock
     response = client.get(url_for(
         'bookmarkresource', 
         bookmark_id=mock_bookmark_object.id
@@ -37,3 +45,23 @@ def test_get_bookmark(
     assert 'created_at' in data_obj
     assert 'url' in data_obj
     assert mock_bookmark_object.url == data_obj['url']
+
+def test_delete_bookmark(
+        client,
+        mock_get_sqlalchemy,
+        mock_session_sqlalchemy,
+        mock_bookmark_object
+):
+    # prep mock
+    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
+    mock_session_sqlalchemy.delete.return_value = None
+    mock_session_sqlalchemy.commit.return_value = None
+
+    # test with mock
+    response = client.delete(url_for(
+        'bookmarkresource', 
+        bookmark_id=mock_bookmark_object.id
+    ))    
+    assert response.status_code == 204
+    data = parse_response_str(response)
+    assert data == ''

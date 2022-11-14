@@ -16,7 +16,12 @@ def test_endpoint(client):
 def parse_response_str(r):
     data = r.get_data()
     s = data.decode()
-    return s.split('"')[1]
+    print(f"data: {data}; data.decode: {s}")
+    s_split = s.split('"')
+    r = ''
+    if len(s_split) > 1:
+        r = s_split[1]
+    return ''
 
 def valid_uuid(s):
     try:
@@ -55,12 +60,8 @@ def test_delete_bookmark(
 ):
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
-    mock_session_delete_sqlalchemy.return_value = 'foo'
-    mock_session_commit_sqlalchemy.return_value = 'bar'
-    #mock_session_sqlalchemy.delete.return_value = 'foo'
-    #mock_session_sqlalchemy.commit.return_value = 'bar'
-    #mock_sqlalchemy.session.delete.return_value = 'foo'
-    #mock_sqlalchemy.session.commit.return_value = 'bar'
+    mock_session_delete_sqlalchemy.return_value = None
+    mock_session_commit_sqlalchemy.return_value = None
     
     # test with mock
     response = client.delete(url_for(

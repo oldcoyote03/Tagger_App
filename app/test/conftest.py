@@ -70,6 +70,17 @@ def mock_get_sqlalchemy(mocker):
 
 @pytest.fixture
 def mock_session_delete_sqlalchemy(mocker):
+    mock = mocker.patch("sqlalchemy.orm.Session.delete").return_value = mocker.Mock()
+    return mock
+
+@pytest.fixture
+def mock_session_commit_sqlalchemy(mocker):
+    mock = mocker.patch("sqlalchemy.orm.Session.commit").return_value = mocker.Mock()
+    return mock
+
+"""
+@pytest.fixture
+def mock_session_delete_sqlalchemy(mocker):
     mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.session.delete").return_value = mocker.Mock()
     return mock
 
@@ -78,13 +89,12 @@ def mock_session_commit_sqlalchemy(mocker):
     mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.session.commit").return_value = mocker.Mock()
     return mock
 
-"""
 @pytest.fixture
 def mock_sqlalchemy(mocker):
     mock = mocker.patch("flask_sqlalchemy.SQLAlchemy").return_value = mocker.Mock()
     return mock
-
 """
+
 
 @pytest.fixture
 def mock_get_bookmark(mocker):

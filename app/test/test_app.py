@@ -1,3 +1,4 @@
+# pytest /tagger_api/app/test/test_app.py -v -s --env=test
 
 from flask import url_for
 import json

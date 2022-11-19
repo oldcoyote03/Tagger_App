@@ -58,6 +58,7 @@ def test_delete_bookmark(
         mock_get_sqlalchemy,
         mock_session_delete_sqlalchemy,
         mock_session_commit_sqlalchemy,
+        mock_session_commit_integrity_error_sqlalchemy,
         mock_bookmark_object
 ):
     # prep mock
@@ -69,19 +70,19 @@ def test_delete_bookmark(
     response = client.delete(url_for(
         'bookmarkresource', 
         bookmark_id=mock_bookmark_object.id
-    ))    
+    ))
     assert response.status_code == 204
     data = parse_response_str(response)
     assert data == ''
 
     # prep mock
-    mock_session_commit_sqlalchemy.side_effect = IntegrityError
+    mock_session_commit_integrity_error_sqlalchemy.side_effect = IntegrityError
     
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource', 
         bookmark_id=mock_bookmark_object.id
     ))    
-    assert response.status_code == 204
+    assert response.status_code == 400
     data = parse_response_str(response)
-    assert data == ''
+    assert data == 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(mock_bookmark_object.url)

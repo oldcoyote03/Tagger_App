@@ -49,11 +49,13 @@ def mock_bookmark_object():
     )
     return bookmark
 
+"""
 from sqlalchemy.exc import IntegrityError
 @pytest.fixture
 def mock_integrity_error():
     print("mock_integrity_error")
     raise IntegrityError(statement="foo", params=["bar"], orig=IntegrityError)
+"""
 
 """
 @pytest.fixture

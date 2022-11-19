@@ -52,8 +52,6 @@ def test_get_bookmark(
     assert mock_bookmark_object.url == data_obj['url']
 
 
-from sqlalchemy.exc import IntegrityError
-
 def test_delete_bookmark(
         client,
         mock_get_sqlalchemy,
@@ -78,9 +76,10 @@ def test_delete_bookmark(
     assert data == ''
 
     # prep mock
-    mie = lambda: IntegrityError('Mock', ['mock'], IntegrityError)
-    mock_session_commit_integrity_error_sqlalchemy.side_effect = mie
-    #mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
+    #from sqlalchemy.exc import IntegrityError
+    #mie = lambda: IntegrityError('Mock', ['mock'], IntegrityError)
+    #mock_session_commit_integrity_error_sqlalchemy.side_effect = mie
+    mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
     
     # test with mock
     response = client.delete(url_for(

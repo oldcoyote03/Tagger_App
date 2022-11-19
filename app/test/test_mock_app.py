@@ -51,6 +51,7 @@ def test_get_bookmark(
     assert 'url' in data_obj
     assert mock_bookmark_object.url == data_obj['url']
 
+
 class IntegrityError(Exception):
     pass
 

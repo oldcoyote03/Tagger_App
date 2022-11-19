@@ -52,9 +52,8 @@ def mock_bookmark_object():
 
 from sqlalchemy.exc import IntegrityError
 @pytest.fixture
-def mock_integrity_error(mocker):
-    return mocker.Mock(side_effect=IntegrityError('Mock', ['mock'], IntegrityError))
-    #return IntegrityError('Mock', ['mock'], IntegrityError)
+def mock_integrity_error():
+    return IntegrityError('Mock', ['mock'], IntegrityError)
 
 
 """
@@ -89,7 +88,7 @@ def mock_session_commit_sqlalchemy(mocker):
 
 @pytest.fixture
 def mock_session_commit_integrity_error_sqlalchemy(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session.commit").side_effect = mocker.Mock()
+    mock = mocker.patch("sqlalchemy.orm.Session.commit").side_effect = None
     return mock
 
 @pytest.fixture

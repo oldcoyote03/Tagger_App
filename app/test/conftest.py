@@ -54,7 +54,7 @@ from sqlalchemy.exc import IntegrityError
 @pytest.fixture
 def mock_integrity_error():
     print("mock_integrity_error")
-    return IntegrityError('Mock', ['mock'], Exception)
+    return IntegrityError('Mock', ['mock'], IntegrityError)
 
 
 """

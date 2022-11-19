@@ -76,7 +76,7 @@ def test_delete_bookmark(
     assert data == ''
 
     # prep mock
-    ex = IntegrityError(statement="foo", params=["bar"], orig=IntegrityError)
+    ex = IntegrityError(statement="foo", params=["bar"], orig=Exception)
     mock_session_commit_integrity_error_sqlalchemy.side_effect = ex
     
     # test with mock

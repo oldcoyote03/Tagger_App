@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from webargs import fields
-from webargs.flaskparser import use_args
+from webargs.flaskparser import use_args, abort
 
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
@@ -18,7 +18,7 @@ bookmarks_query_args = {
 }
 
 class BookmarksResource(Resource):
-    
+
     @use_args(bookmarks_query_args, location="query")
     def get(self, args):
         if 'url' in args:
@@ -49,7 +49,7 @@ class BookmarkResource(Resource):
     def get(self, bookmark_id):
         bookmark = Bookmarks.query.get_or_404(bookmark_id)
         return bookmark_schema.dump(bookmark)
-    
+
     def delete(self, bookmark_id):
         bookmark = Bookmarks.query.get_or_404(bookmark_id)
         db.session.delete(bookmark)
@@ -62,3 +62,12 @@ class TestResource(Resource):
     def get(self):
         output = { "msg": "This is the test endpoint" }
         return jsonify(output)
+
+
+# This error handler is necessary for usage with Flask-RESTful
+@parser.error_handler
+def handle_request_parsing_error(err, req, schema, *, error_status_code, error_headers):
+    """webargs error handler that uses Flask-RESTful's abort function to return
+    a JSON error response to the client.
+    """
+    abort(error_status_code, errors=err.messages)

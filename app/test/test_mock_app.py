@@ -84,16 +84,18 @@ def test_delete_bookmark_integrity_error(
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
     mock_session_delete_sqlalchemy.return_value = None
-    #from sqlalchemy.exc import IntegrityError
+    from sqlalchemy.exc import IntegrityError
     #mie = lambda: IntegrityError('Mock', ['mock'], IntegrityError)
     #mock_session_commit_integrity_error_sqlalchemy.side_effect = mie
-    mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
+    #mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
+    ie = IntegrityError('Mock', ['mock'], IntegrityError)
+    mock_session_commit_integrity_error_sqlalchemy.side_effect = ie
     
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource', 
         bookmark_id=mock_bookmark_object.id
-    ))    
+    ))
     data = parse_response_str(response)
     assert response.status_code == 400
     #data = parse_response_str(response)

@@ -71,8 +71,7 @@ def handle_request_parsing_error(err, req, schema, error_status_code, error_head
     a JSON error response to the client.
     """
     print(f"err: {err}")
+    print(f"err.messages: {err.messages}")
     print(f"req: {req}")
     print(f"schema: {schema}")
-    print(f"error_status_code: {error_status_code}")
-    print(f"error_headers: {error_headers}")
-    abort(422, errors=err)
+    abort(422, errors=err.messages)

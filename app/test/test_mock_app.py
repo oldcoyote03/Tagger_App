@@ -57,7 +57,6 @@ def test_delete_bookmark(
         mock_get_sqlalchemy,
         mock_session_delete_sqlalchemy,
         mock_session_commit_sqlalchemy,
-        mock_session_commit_integrity_error_sqlalchemy,
         mock_bookmark_object,
         mock_integrity_error
 ):

@@ -75,4 +75,4 @@ def handle_request_parsing_error(err, req, schema, error_status_code, error_head
     print(f"err.messages['json']: {err.messages['json']}")
     print(f"req: {req}")
     print(f"schema: {schema}")
-    abort(422, errors=err)
+    abort(422, errors=err.messages['json'])

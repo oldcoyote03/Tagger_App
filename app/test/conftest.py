@@ -83,7 +83,7 @@ def mock_session_delete_sqlalchemy(mocker):
 
 @pytest.fixture
 def mock_session_commit_sqlalchemy(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session.commit") = mocker.Mock()
+    mock = mocker.patch("sqlalchemy.orm.Session").commit = mocker.Mock()
     return mock
 
 """

@@ -52,7 +52,7 @@ def mock_bookmark_object():
 from sqlalchemy.exc import IntegrityError
 @pytest.fixture
 def mock_integrity_error():
-    raise IntegrityError
+    raise IntegrityError(statement="foo", params=["bar"], orig=Exception)
 
 """
 @pytest.fixture

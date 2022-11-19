@@ -1,6 +1,6 @@
-from flask_restful import Resource, abort
+from flask_restful import Resource
 from webargs import fields
-from webargs.flaskparser import use_args, parser
+from webargs.flaskparser import use_args, parser, abort
 
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
@@ -75,4 +75,4 @@ def handle_request_parsing_error(err, req, schema, error_status_code, error_head
     print(f"schema: {schema}")
     print(f"error_status_code: {error_status_code}")
     print(f"error_headers: {error_headers}")
-    abort(str(err))
+    abort(422, str(err))

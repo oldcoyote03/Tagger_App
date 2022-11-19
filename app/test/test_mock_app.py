@@ -85,6 +85,8 @@ def test_delete_bookmark(
         'bookmarkresource', 
         bookmark_id=mock_bookmark_object.id
     ))    
-    assert response.status_code == 400
     data = parse_response_str(response)
+    print(f"data: {data}")
+    assert response.status_code == 400
+    #data = parse_response_str(response)
     assert data == 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(mock_bookmark_object.url)

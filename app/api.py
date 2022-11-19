@@ -36,12 +36,13 @@ class BookmarksResource(Resource):
         )
         db.session.add(bookmark)
         try:
+            print(f"before commit: {args['url']}")
             db.session.commit()
         except IntegrityError:
             return 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(args['url']), 400
         except:
             return 'Bad Request', 400
-        print(f"args['url']: {args['url']}")
+        print(f"after commit: {args['url']}")
         return str(bm_id)
 
 

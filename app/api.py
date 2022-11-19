@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from webargs import fields
-from webargs.flaskparser import use_args, abort
+from webargs.flaskparser import use_args
 
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid
@@ -66,7 +66,7 @@ class TestResource(Resource):
 
 # This error handler is necessary for usage with Flask-RESTful
 @parser.error_handler
-def handle_request_parsing_error(err, req, schema, *, error_status_code, error_headers):
+def handle_request_parsing_error(err, req, schema, error_status_code, error_headers):
     """webargs error handler that uses Flask-RESTful's abort function to return
     a JSON error response to the client.
     """

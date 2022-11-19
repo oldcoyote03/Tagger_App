@@ -34,8 +34,8 @@ class BookmarksResource(Resource):
             id=bm_id,
             url=args['url']
         )
+        db.session.add(bookmark)
         try:
-            db.session.add(bookmark)
             db.session.commit()
         except IntegrityError:
             return 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(args['url']), 400
@@ -70,9 +70,4 @@ def handle_request_parsing_error(err, req, schema, error_status_code, error_head
     """webargs error handler that uses Flask-RESTful's abort function to return
     a JSON error response to the client.
     """
-    print(f"err: {err}")
-    print(f"err.messages: {err.messages}")
-    print(f"err.messages['json']: {err.messages['json']}")
-    print(f"req: {req}")
-    print(f"schema: {schema}")
     abort(422, errors=err.messages['json'])

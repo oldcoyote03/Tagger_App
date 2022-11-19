@@ -49,6 +49,11 @@ def mock_bookmark_object():
     )
     return bookmark
 
+from sqlalchemy.exc import IntegrityError
+@pytest.fixture
+def mock_integrity_error():
+    raise IntegrityError
+
 """
 @pytest.fixture
 def mock_bookmarks_object():
@@ -62,6 +67,7 @@ def mock_bookmarks_object():
 """
 
 # mock actions
+# https://pytest-mock.readthedocs.io/en/latest/
 
 @pytest.fixture
 def mock_get_sqlalchemy(mocker):
@@ -76,6 +82,11 @@ def mock_session_delete_sqlalchemy(mocker):
 @pytest.fixture
 def mock_session_commit_sqlalchemy(mocker):
     mock = mocker.patch("sqlalchemy.orm.Session.commit").return_value = mocker.Mock()
+    return mock
+
+@pytest.fixture
+def mock_session_commit_integrity_error_sqlalchemy(mocker):
+    mock = mocker.patch("sqlalchemy.orm.Session.commit").side_effect = mocker.Mock()
     return mock
 
 @pytest.fixture

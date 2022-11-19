@@ -56,12 +56,25 @@ def test_delete_bookmark(
         mock_get_sqlalchemy,
         mock_session_delete_sqlalchemy,
         mock_session_commit_sqlalchemy,
-        mock_bookmark_object
+        mock_bookmark_object,
+        mock_integrity_error
 ):
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
     mock_session_delete_sqlalchemy.return_value = None
     mock_session_commit_sqlalchemy.return_value = None
+    
+    # test with mock
+    response = client.delete(url_for(
+        'bookmarkresource', 
+        bookmark_id=mock_bookmark_object.id
+    ))    
+    assert response.status_code == 204
+    data = parse_response_str(response)
+    assert data == ''
+
+    # prep mock
+    mock_session_commit_sqlalchemy.side_effect = mock_integrity_error
     
     # test with mock
     response = client.delete(url_for(

@@ -1,6 +1,6 @@
 from flask_restful import Resource, abort
 from webargs import fields
-from webargs.flaskparser import use_args
+from webargs.flaskparser import use_args, parser
 
 from app.schema import db, ma, Bookmarks, BookmarksSchema
 import uuid

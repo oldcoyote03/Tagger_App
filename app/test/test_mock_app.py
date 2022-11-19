@@ -78,7 +78,9 @@ def test_delete_bookmark(
     assert data == ''
 
     # prep mock
-    mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
+    mie = lambda: IntegrityError('Mock', ['mock'], IntegrityError)
+    mock_session_commit_integrity_error_sqlalchemy.side_effect = mie
+    #mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
     
     # test with mock
     response = client.delete(url_for(

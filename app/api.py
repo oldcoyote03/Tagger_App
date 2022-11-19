@@ -75,4 +75,4 @@ def handle_request_parsing_error(err, req, schema, error_status_code, error_head
     print(f"schema: {schema}")
     print(f"error_status_code: {error_status_code}")
     print(f"error_headers: {error_headers}")
-    abort(422, str(err))
+    abort(str(err))

@@ -99,8 +99,11 @@ def test_delete_bookmark(
         'bookmarkresource',
         bookmark_id=mock_bookmark_object.id
     ))
-    assert response.status_code == 400
-    assert data == 'Bad Request'
+    assert response.status_code == 404
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert 'message' in data_obj
+    assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
 
 """
 def test_post_bookmark(

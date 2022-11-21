@@ -33,16 +33,19 @@ def valid_uuid(s):
 def test_get_bookmark(
         client,
         mock_get_sqlalchemy,
-        mock_bookmark_object
+        mock_bookmark_object,
+        mock_get_not_found_sqlalchemy,
+        mock_bookmark_not_found_exc
 ):
+    # successful get
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
-    
+
     # test with mock
     response = client.get(url_for(
-        'bookmarkresource', 
+        'bookmarkresource',
         bookmark_id=mock_bookmark_object.id
-    ))    
+    ))
     assert response.status_code == 200
     data = response.get_data()
     data_obj = json.loads(data)
@@ -51,51 +54,66 @@ def test_get_bookmark(
     assert 'url' in data_obj
     assert mock_bookmark_object.url == data_obj['url']
 
+    # failed get
+    # prep mock
+    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_exc("foo")
+
+    # test with mock
+    response = client.get(url_for(
+        'bookmarkresource',
+        bookmark_id=mock_bookmark_object.id
+    ))
+    assert response.status_code == 404
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert 'message' in data_obj
+    assert data_obj['msg'] == "foo"
+
 
 def test_delete_bookmark(
         client,
         mock_get_sqlalchemy,
         mock_session_delete_sqlalchemy,
         mock_session_commit_sqlalchemy,
-        mock_bookmark_object
+        mock_session_commit_integrity_error_sqlalchemy,
+        mock_bookmark_object,
+        mock_integrity_error,
+        mock_bookmark_not_found_error
 ):
+    # success delete
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
     mock_session_delete_sqlalchemy.return_value = None
     mock_session_commit_sqlalchemy.return_value = None
-    
+
     # test with mock
     response = client.delete(url_for(
-        'bookmarkresource', 
+        'bookmarkresource',
         bookmark_id=mock_bookmark_object.id
     ))
     assert response.status_code == 204
-    data = parse_response_str(response)
-    assert data == ''
 
-def test_delete_bookmark_integrity_error(
-        client,
-        mock_get_sqlalchemy,
-        mock_session_delete_sqlalchemy,
-        mock_session_commit_integrity_error_sqlalchemy,
-        mock_bookmark_object,
-        mock_integrity_error
-):
+    # failed session commit
     # prep mock
-    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
-    mock_session_delete_sqlalchemy.return_value = None
-    from sqlalchemy.exc import IntegrityError
-    #mie = lambda: IntegrityError('Mock', ['mock'], IntegrityError)
-    #mock_session_commit_integrity_error_sqlalchemy.side_effect = mie
-    #mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
-    mock_session_commit_integrity_error_sqlalchemy.side_effect = IntegrityError
-    
+    mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
+
     # test with mock
     response = client.delete(url_for(
-        'bookmarkresource', 
+        'bookmarkresource',
         bookmark_id=mock_bookmark_object.id
     ))
-    data = parse_response_str(response)
     assert response.status_code == 400
-    #data = parse_response_str(response)
-    assert data == 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(mock_bookmark_object.url)
+    assert data == 'Bad Request'
+
+    # failed get bookmark
+    # prep mock
+    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_error
+    mock_session_commit_integrity_error_sqlalchemy.side_effect = None
+
+    # test with mock
+    response = client.delete(url_for(
+        'bookmarkresource',
+        bookmark_id=mock_bookmark_object.id
+    ))
+    assert response.status_code == 400
+    assert data == 'Bad Request'

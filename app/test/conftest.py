@@ -49,6 +49,10 @@ def mock_bookmark_object():
     )
     return bookmark
 
+from werkzeug.exceptions import NotFound
+@pytest.fixture
+def mock_bookmark_not_found_exc(msg):
+    return NotFound(msg)
 
 from sqlalchemy.exc import IntegrityError
 @pytest.fixture
@@ -81,14 +85,6 @@ def mock_session_delete_sqlalchemy(mocker):
     mock = mocker.patch("sqlalchemy.orm.Session.delete").return_value = mocker.Mock()
     return mock
 
-"""
-@pytest.fixture
-def mock_session_commit_sqlalchemy(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session").commit = mocker.Mock()
-    return mock
-
-"""
-
 @pytest.fixture
 def mock_session_commit_sqlalchemy(mocker):
     mock = mocker.patch("sqlalchemy.orm.Session.commit").return_value = mocker.Mock()
@@ -96,9 +92,5 @@ def mock_session_commit_sqlalchemy(mocker):
 
 @pytest.fixture
 def mock_session_commit_integrity_error_sqlalchemy(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session").commit = mocker.Mock()
+    mock = mocker.patch("sqlalchemy.orm.Session.commit").side_effect = mocker.Mock()
     return mock
-
-@pytest.fixture
-def mock_get_bookmark(mocker):
-    return mocker.patch("app.api.BookmarkResource.get")

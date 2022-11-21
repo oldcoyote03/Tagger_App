@@ -17,6 +17,8 @@ bookmarks_query_args = {
     'url': fields.String(required=False)
 }
 
+not_found_msg = ""
+
 class BookmarksResource(Resource):
 
     @use_args(bookmarks_query_args, location="query")
@@ -36,24 +38,34 @@ class BookmarksResource(Resource):
         )
         db.session.add(bookmark)
         try:
-            print(f"before commit: {args['url']}")
             db.session.commit()
         except IntegrityError:
             return 'Bad Request: IntegrityError: Bookmark {} may already exist.'.format(args['url']), 400
         except:
             return 'Bad Request', 400
-        print(f"after commit: {args['url']}")
-        return str(bm_id)
+        return f"{bm_id}"
 
 
 class BookmarkResource(Resource):
 
+    def __init__(self):
+        super.__init__()
+        self.not_found_msg = "The requested URL was not found on the server."
+
     def get(self, bookmark_id):
-        bookmark = Bookmarks.query.get_or_404(bookmark_id)
+        fail_msg = f"Failed to get bookmark {bookmark_id}. {self.not_found_msg}"
+        bookmark = Bookmarks.query.get_or_404(
+            ident=bookmark_id,
+            description=jsonify({"message": fail_msg})
+        )
         return bookmark_schema.dump(bookmark)
 
     def delete(self, bookmark_id):
-        bookmark = Bookmarks.query.get_or_404(bookmark_id)
+        fail_msg = f"Failed to delete bookmark {bookmark_id}. {self.not_found_msg}"
+        bookmark = Bookmarks.query.get_or_404(
+            ident=bookmark_id, 
+            description=jsonify({"message": fail_msg})
+        )
         db.session.delete(bookmark)
         db.session.commit()
         return '', 204

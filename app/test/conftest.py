@@ -93,12 +93,6 @@ def mock_get_sqlalchemy(mocker):
 # def delete() is type None
 # def commit() is type None
 @pytest.fixture
-def mock_session_sqlalchemy(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session").return_value = mocker.Mock()
-    return mock
-
-"""
-@pytest.fixture
 def mock_session_delete_sqlalchemy(mocker):
     mock = mocker.patch("sqlalchemy.orm.Session.delete").return_value = mocker.Mock()
     return mock
@@ -112,4 +106,3 @@ def mock_session_commit_sqlalchemy(mocker):
 def mock_session_commit_integrity_error_sqlalchemy(mocker):
     mock = mocker.patch("sqlalchemy.orm.Session.commit").side_effect = mocker.Mock()
     return mock
-"""

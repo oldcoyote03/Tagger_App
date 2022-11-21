@@ -72,19 +72,16 @@ def test_get_bookmark(
 def test_delete_bookmark(
         client,
         mock_get_sqlalchemy,
-        mock_session_sqlalchemy,
-        #mock_session_delete_sqlalchemy,
-        #mock_session_commit_sqlalchemy,
+        mock_session_delete_sqlalchemy,
+        mock_session_commit_sqlalchemy,
         mock_bookmark_object,
         mock_bookmark_not_found_exc
 ):
     # success delete
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
-    mock_session_sqlalchemy.delete.return_value = None
-    mock_session_sqlalchemy.commit.return_value = None
-    #mock_session_delete_sqlalchemy.return_value = None
-    #mock_session_commit_sqlalchemy.return_value = None
+    mock_session_delete_sqlalchemy.return_value = None
+    mock_session_commit_sqlalchemy.return_value = None
 
     # test with mock
     response = client.delete(url_for(
@@ -96,8 +93,7 @@ def test_delete_bookmark(
     # failed get bookmark
     # prep mock
     mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_error
-    #mock_session_commit_integrity_error_sqlalchemy.side_effect = None
-
+    
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource',

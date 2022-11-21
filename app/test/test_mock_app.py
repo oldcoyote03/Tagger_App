@@ -92,7 +92,7 @@ def test_delete_bookmark(
 
     # failed get bookmark
     # prep mock
-    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_error
+    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_exc
     
     # test with mock
     response = client.delete(url_for(

@@ -72,18 +72,19 @@ def test_get_bookmark(
 def test_delete_bookmark(
         client,
         mock_get_sqlalchemy,
-        mock_session_delete_sqlalchemy,
-        mock_session_commit_sqlalchemy,
-        mock_session_commit_integrity_error_sqlalchemy,
+        mock_session_sqlalchemy,
+        #mock_session_delete_sqlalchemy,
+        #mock_session_commit_sqlalchemy,
         mock_bookmark_object,
-        mock_integrity_error,
         mock_bookmark_not_found_exc
 ):
     # success delete
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
-    mock_session_delete_sqlalchemy.return_value = None
-    mock_session_commit_sqlalchemy.return_value = None
+    mock_session_sqlalchemy.delete.return_value = None
+    mock_session_sqlalchemy.commit.return_value = None
+    #mock_session_delete_sqlalchemy.return_value = None
+    #mock_session_commit_sqlalchemy.return_value = None
 
     # test with mock
     response = client.delete(url_for(
@@ -92,27 +93,34 @@ def test_delete_bookmark(
     ))
     assert response.status_code == 204
 
-    # failed session commit
+    # failed get bookmark
     # prep mock
+    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_error
+    #mock_session_commit_integrity_error_sqlalchemy.side_effect = None
+
+    # test with mock
+    response = client.delete(url_for(
+        'bookmarkresource',
+        bookmark_id=mock_bookmark_object.id
+    ))
+    assert response.status_code == 400
+    assert data == 'Bad Request'
+
+"""
+def test_post_bookmark(
+    mock_session_commit_integrity_error_sqlalchemy
+):
+    # successful post
+    # prep mock
+
+    # failed post: duplicate url
     mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
 
     # test with mock
     response = client.delete(url_for(
-        'bookmarkresource',
+        'bookmarksresource',
         bookmark_id=mock_bookmark_object.id
     ))
     assert response.status_code == 400
-    assert data == 'Bad Request'
-
-    # failed get bookmark
-    # prep mock
-    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_error
-    mock_session_commit_integrity_error_sqlalchemy.side_effect = None
-
-    # test with mock
-    response = client.delete(url_for(
-        'bookmarkresource',
-        bookmark_id=mock_bookmark_object.id
-    ))
-    assert response.status_code == 400
-    assert data == 'Bad Request'
+    assert data == f"Bad Request: IntegrityError: Bookmark {mock_bookmark_obj.url} may already exist."
+"""

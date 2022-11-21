@@ -81,20 +81,16 @@ def mock_bookmarks_object():
 
 
 @pytest.fixture
-def mock_get_or_404(mocker):
-    mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.Model.query.__get__").return_value = mocker.Mock()
-    return mock
-
-"""
-@pytest.fixture
 def mock_get_sqlalchemy(mocker):
     mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value = mocker.Mock()
     return mock
+
 """
 @pytest.fixture
 def mock_get_not_found_sqlalchemy(mocker):
     mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__").side_effect = mocker.Mock()
     return mock
+"""
 
 @pytest.fixture
 def mock_session_delete_sqlalchemy(mocker):

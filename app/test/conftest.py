@@ -3,8 +3,7 @@ from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from app.api import TestResource, BookmarkResource
-#from app.api import TestResource, BookmarkResource, BookmarksResource
+from app.api import TestResource, BookmarkResource, BookmarksResource
 from app import create_app
 from app.schema import Bookmarks
 import uuid

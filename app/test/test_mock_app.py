@@ -32,6 +32,7 @@ def valid_uuid(s):
 
 def test_get_bookmark(
         client,
+        mock_get_or_404,
         mock_get_sqlalchemy,
         mock_bookmark_object,
         mock_get_not_found_sqlalchemy,
@@ -39,7 +40,7 @@ def test_get_bookmark(
 ):
     # successful get
     # prep mock
-    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
+    mock_get_or_404.return_value = mock_bookmark_object
 
     # test with mock
     response = client.get(url_for(

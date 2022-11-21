@@ -81,6 +81,11 @@ def mock_get_sqlalchemy(mocker):
     return mock
 
 @pytest.fixture
+def mock_get_not_found_sqlalchemy(mocker):
+    mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__").side_effect = mocker.Mock()
+    return mock
+
+@pytest.fixture
 def mock_session_delete_sqlalchemy(mocker):
     mock = mocker.patch("sqlalchemy.orm.Session.delete").return_value = mocker.Mock()
     return mock

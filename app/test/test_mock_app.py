@@ -34,7 +34,6 @@ def test_get_bookmark(
         client,
         mock_get_sqlalchemy,
         mock_bookmark_object,
-        mock_get_not_found_sqlalchemy,
         mock_bookmark_not_found_exc
 ):
     # successful get

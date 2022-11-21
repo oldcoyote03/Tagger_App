@@ -112,7 +112,7 @@ def test_get_bookmarks(
 ):
     # successful post
     # prep mock
-    mock_get_sqlalchemy.all = mock_bookmarks_object
+    mock_get_sqlalchemy.all.return_value = mock_bookmarks_object
 
     # test with mock
     response = client.get(url_for('bookmarksresource'))

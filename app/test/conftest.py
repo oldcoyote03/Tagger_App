@@ -72,7 +72,6 @@ def mock_bookmarks_object():
 # mock actions
 # https://pytest-mock.readthedocs.io/en/latest/
 
-
 # flask_sqlalchemy as f(d) 
 # --> f.__init__.py --> from f.extension(f) import SQLAlchemy
 # --> in f.extension --> from f.model(f) import Model --> in f.model 

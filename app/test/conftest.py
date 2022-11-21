@@ -31,7 +31,7 @@ def app(request):
         ma.init_app(test_app)
         api.add_resource(TestResource, '/test')
         api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
-        #api.add_resource(BookmarksResource, '/bookmarks')
+        api.add_resource(BookmarksResource, '/bookmarks')
     elif request.config.option.env == 'test':
         # valid DB connection
         test_app = create_app()

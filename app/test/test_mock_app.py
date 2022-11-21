@@ -55,7 +55,7 @@ def test_get_bookmark(
 
     # failed get
     # prep mock
-    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_exc("foo")
+    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_exc
 
     # test with mock
     response = client.get(url_for(
@@ -66,7 +66,7 @@ def test_get_bookmark(
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj
-    assert data_obj['message'] == "foo"
+    assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
 
 
 def test_delete_bookmark(

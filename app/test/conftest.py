@@ -52,11 +52,7 @@ def mock_bookmark_object():
 from werkzeug.exceptions import NotFound
 @pytest.fixture
 def mock_bookmark_not_found_exc():
-    
-    def _method(msg):
-        return NotFound(msg)
-
-    return _method
+    return NotFound
 
 from sqlalchemy.exc import IntegrityError
 @pytest.fixture

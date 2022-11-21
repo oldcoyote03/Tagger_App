@@ -78,7 +78,7 @@ def test_delete_bookmark(
         mock_session_commit_integrity_error_sqlalchemy,
         mock_bookmark_object,
         mock_integrity_error,
-        mock_bookmark_not_found_error
+        mock_bookmark_not_found_exc
 ):
     # success delete
     # prep mock

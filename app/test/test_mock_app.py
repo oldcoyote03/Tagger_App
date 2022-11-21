@@ -105,6 +105,23 @@ def test_delete_bookmark(
     assert 'message' in data_obj
     assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
 
+def test_get_bookmarks(
+        client,
+        mock_get_sqlalchemy,
+        mock_bookmarks_object
+):
+    # successful post
+    # prep mock
+    mock_get_sqlalchemy.all = mock_bookmarks_object
+
+    # test with mock
+    response = client.get(url_for('bookmarksresource'))
+    assert response.status_code == 200
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert len(data_obj) == 2
+    
+
 """
 def test_post_bookmark(
     mock_session_commit_integrity_error_sqlalchemy

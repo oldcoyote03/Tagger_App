@@ -60,7 +60,6 @@ def mock_integrity_error():
     return IntegrityError('Mock', ['mock'], IntegrityError)
 
 
-"""
 @pytest.fixture
 def mock_bookmarks_object():
     bookmarks = []
@@ -70,7 +69,6 @@ def mock_bookmarks_object():
             url=f"https://www.{name}.com"
         ))
     return bookmarks
-"""
 
 # mock actions
 # https://pytest-mock.readthedocs.io/en/latest/
@@ -80,7 +78,7 @@ def mock_bookmarks_object():
 # --> f.__init__.py --> from f.extension(f) import SQLAlchemy
 # --> in f.extension --> from f.model(f) import Model --> in f.model 
 # --> class Model --> def __init__(self): --> self.query = _QueryProperty
-# --> class _QueryProperty def __get__() is type Query
+# --> class _QueryProperty def __get__() returns instance of type Query
 # --> from f.query(f) import Query 
 @pytest.fixture
 def mock_get_sqlalchemy(mocker):
@@ -90,8 +88,8 @@ def mock_get_sqlalchemy(mocker):
 # sqlalchemy.orm as s(d)
 # --> s.__init__.py --> from s.session(f) import Session
 # --> in s.session --> class Session
-# def delete() is type None
-# def commit() is type None
+# def delete() returns type None
+# def commit() returns type None
 @pytest.fixture
 def mock_session_delete_sqlalchemy(mocker):
     mock = mocker.patch("sqlalchemy.orm.Session.delete").return_value = mocker.Mock()

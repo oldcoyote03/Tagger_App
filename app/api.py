@@ -48,24 +48,12 @@ class BookmarksResource(Resource):
 
 class BookmarkResource(Resource):
 
-    def __init__(self):
-        super().__init__()
-        self.not_found_msg = "The requested URL was not found on the server."
-
     def get(self, bookmark_id):
-        fail_msg = f"Failed to get bookmark {bookmark_id}. {self.not_found_msg}"
-        bookmark = Bookmarks.query.get_or_404(
-            ident=bookmark_id,
-            description=jsonify({"message": fail_msg})
-        )
+        bookmark = Bookmarks.query.get_or_404(bookmark_id)
         return bookmark_schema.dump(bookmark)
 
     def delete(self, bookmark_id):
-        fail_msg = f"Failed to delete bookmark {bookmark_id}. {self.not_found_msg}"
-        bookmark = Bookmarks.query.get_or_404(
-            ident=bookmark_id, 
-            description=jsonify({"message": fail_msg})
-        )
+        bookmark = Bookmarks.query.get_or_404(bookmark_id)
         db.session.delete(bookmark)
         db.session.commit()
         return '', 204

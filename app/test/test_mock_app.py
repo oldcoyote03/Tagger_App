@@ -66,7 +66,7 @@ def test_get_bookmark(
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj
-    assert data_obj['msg'] == "foo"
+    assert data_obj['message'] == "foo"
 
 
 def test_delete_bookmark(

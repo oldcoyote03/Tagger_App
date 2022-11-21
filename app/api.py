@@ -49,7 +49,7 @@ class BookmarksResource(Resource):
 class BookmarkResource(Resource):
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
         self.not_found_msg = "The requested URL was not found on the server."
 
     def get(self, bookmark_id):

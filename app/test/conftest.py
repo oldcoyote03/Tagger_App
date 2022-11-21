@@ -82,7 +82,7 @@ def mock_bookmarks_object():
 
 @pytest.fixture
 def mock_get_or_404(mocker):
-    mock = mocker.patch("flask_sqlalchemy.query.Query.get_or_404").return_value = mocker.Mock()
+    mock = mocker.patch("flask_sqlalchemy.SQLAlchemy.Model.query.__get__").return_value = mocker.Mock()
     return mock
 
 """

@@ -69,6 +69,14 @@ def mock_bookmarks_object():
         ))
     return bookmarks
 
+@pytest.fixture
+def mock_bookmarks_filter_object():
+    bookmark = Bookmarks(
+        id=uuid.uuid4(),
+        url=f"https://www.foo.com"
+    )
+    return [bookmark]
+
 # mock actions
 # https://pytest-mock.readthedocs.io/en/latest/
 

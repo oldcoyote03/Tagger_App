@@ -46,12 +46,6 @@ def test_get_bookmark(
         bookmark_id=mock_bookmark_object.id
     ))
     assert response.status_code == 200
-    data = response.get_data()
-    data_obj = json.loads(data)
-    assert 'id' in data_obj
-    assert 'created_at' in data_obj
-    assert 'url' in data_obj
-    assert mock_bookmark_object.url == data_obj['url']
 
     # failed get
     # prep mock
@@ -67,7 +61,6 @@ def test_get_bookmark(
     data_obj = json.loads(data)
     assert 'message' in data_obj
     assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
-
 
 def test_delete_bookmark(
         client,
@@ -110,7 +103,7 @@ def test_get_bookmarks(
         mock_get_sqlalchemy,
         mock_bookmarks_object
 ):
-    # successful post
+    # successful get all
     # prep mock
     mock_get_sqlalchemy.all.return_value = mock_bookmarks_object
 
@@ -120,6 +113,18 @@ def test_get_bookmarks(
     data = response.get_data()
     data_obj = json.loads(data)
     assert len(data_obj) == 2
+
+    # successful get with filter
+    # prep mock
+    mock_get_sqlalchemy.all.return_value = None
+    mock_get_sqlalchemy.filter_by.return_value = mock_bookmarks_filter_object
+
+    url = "https://www.foo.com"
+    response = client.get(url_for('bookmarksresource') + "?url=" + url)
+    assert response.status_code == 200
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert len(data_obj) == 1
     
 
 """

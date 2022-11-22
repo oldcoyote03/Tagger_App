@@ -127,8 +127,18 @@ def test_get_bookmarks(
     data_obj = json.loads(data)
     assert len(data_obj) == 1
     
-    # successful get invalid filter filter
+    # successful get with invalid filter
     # prep mock
+    mock_get_sqlalchemy.filter_by.return_value = None
+    mock_get_sqlalchemy.all.return_value = mock_bookmarks_object
+
+    # test with mock
+    response = client.get(url_for('bookmarksresource') + "?invalid=" + url)
+    assert response.status_code == 200
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert len(data_obj) == 2
+
 
 """
 def test_post_bookmark(

@@ -101,7 +101,8 @@ def test_delete_bookmark(
 def test_get_bookmarks(
         client,
         mock_get_sqlalchemy,
-        mock_bookmarks_object
+        mock_bookmarks_object,
+        mock_bookmarks_filter_object
 ):
     # successful get all
     # prep mock
@@ -126,6 +127,8 @@ def test_get_bookmarks(
     data_obj = json.loads(data)
     assert len(data_obj) == 1
     
+    # successful get invalid filter filter
+    # prep mock
 
 """
 def test_post_bookmark(

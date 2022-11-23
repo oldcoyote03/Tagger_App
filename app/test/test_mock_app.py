@@ -70,7 +70,7 @@ def test_get_bookmark_thin(
 ):
     # successful get
     # prep mock
-    mock_get_sqlalchemy_thin.return_value.get_or_404.return_value = mock_bookmark_object
+    mock_get_sqlalchemy_thin.get_or_404.return_value = mock_bookmark_object
 
     # test with mock
     response = client.get(url_for(

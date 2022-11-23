@@ -24,6 +24,8 @@ def app(request):
     if request.config.option.env == 'dev':
         # mock app
         test_app = Flask(__name__)
+        test_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        test_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         db = SQLAlchemy(test_app)
         db.init_app(test_app)
         api = Api(test_app)
@@ -93,8 +95,7 @@ def mock_get_sqlalchemy(mocker):
 
 @pytest.fixture
 def mock_get_sqlalchemy_thin(mocker):
-    mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__")
-    return mock
+    return mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value
 
 # sqlalchemy.orm as s(d)
 # --> s.__init__.py --> from s.session(f) import Session
@@ -118,5 +119,4 @@ def mock_session_commit_integrity_error_sqlalchemy(mocker):
 
 @pytest.fixture
 def mock_session_commit_sqlalchemy_thin(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session.commit")
-    return mock
+    return mocker.patch("sqlalchemy.orm.Session.commit")

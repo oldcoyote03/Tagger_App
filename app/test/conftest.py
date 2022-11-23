@@ -91,6 +91,11 @@ def mock_get_sqlalchemy(mocker):
     mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value = mocker.Mock()
     return mock
 
+@pytest.fixture
+def mock_get_sqlalchemy_thin(mocker):
+    mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__")
+    return mock
+
 # sqlalchemy.orm as s(d)
 # --> s.__init__.py --> from s.session(f) import Session
 # --> in s.session --> class Session

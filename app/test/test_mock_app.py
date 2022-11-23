@@ -62,6 +62,23 @@ def test_get_bookmark(
     assert 'message' in data_obj
     assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
 
+def test_get_bookmark_thin(
+        client,
+        mock_get_sqlalchemy_thin,
+        mock_bookmark_object,
+        mock_bookmark_not_found_exc
+):
+    # successful get
+    # prep mock
+    mock_get_sqlalchemy.return_value.get_or_404.return_value = mock_bookmark_object
+
+    # test with mock
+    response = client.get(url_for(
+        'bookmarkresource',
+        bookmark_id=mock_bookmark_object.id
+    ))
+    assert response.status_code == 200
+
 def test_delete_bookmark(
         client,
         mock_get_sqlalchemy,
@@ -118,7 +135,7 @@ def test_delete_bookmark_commit_exc(
         'bookmarkresource',
         bookmark_id=mock_bookmark_object.id
     ))
-    assert response.status_code == 404
+    assert response.status_code == 500
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj
@@ -143,7 +160,7 @@ def test_delete_bookmark_commit_exc_thin(
         'bookmarkresource',
         bookmark_id=mock_bookmark_object.id
     ))
-    assert response.status_code == 404
+    assert response.status_code == 500
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj

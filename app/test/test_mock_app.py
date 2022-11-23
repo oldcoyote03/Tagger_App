@@ -68,7 +68,8 @@ def test_delete_bookmark(
         mock_session_delete_sqlalchemy,
         mock_session_commit_sqlalchemy,
         mock_bookmark_object,
-        mock_bookmark_not_found_exc
+        mock_bookmark_not_found_exc,
+        mock_session_commit_sqlalchemy_thin
 ):
     # success delete
     # prep mock
@@ -87,6 +88,56 @@ def test_delete_bookmark(
     # prep mock
     mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_exc
     
+    # test with mock
+    response = client.delete(url_for(
+        'bookmarkresource',
+        bookmark_id=mock_bookmark_object.id
+    ))
+    assert response.status_code == 404
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert 'message' in data_obj
+    assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
+
+def test_delete_bookmark_commit_exc(
+        client,
+        mock_get_sqlalchemy,
+        mock_session_delete_sqlalchemy,
+        mock_session_commit_sqlalchemy,
+        mock_bookmark_object,
+        mock_integrity_error
+):
+    # failed delete commit
+    # prep mock
+    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
+    mock_session_delete_sqlalchemy.return_value = None
+    mock_session_commit_sqlalchemy.side_effect = mock_integrity_error
+    
+    # test with mock
+    response = client.delete(url_for(
+        'bookmarkresource',
+        bookmark_id=mock_bookmark_object.id
+    ))
+    assert response.status_code == 404
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert 'message' in data_obj
+    assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
+
+def test_delete_bookmark_commit_exc_thin(
+        client,
+        mock_get_sqlalchemy,
+        mock_session_delete_sqlalchemy,
+        mock_session_commit_sqlalchemy_thin,
+        mock_bookmark_object,
+        mock_integrity_error
+):
+    # failed delete commit thin
+    # prep mock
+    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
+    mock_session_delete_sqlalchemy.return_value = None
+    mock_session_commit_sqlalchemy_thin.side_effect = mock_integrity_error
+
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource',

@@ -110,3 +110,8 @@ def mock_session_commit_sqlalchemy(mocker):
 def mock_session_commit_integrity_error_sqlalchemy(mocker):
     mock = mocker.patch("sqlalchemy.orm.Session.commit").side_effect = mocker.Mock()
     return mock
+
+@pytest.fixture
+def mock_session_commit_sqlalchemy_thin(mocker):
+    mock = mocker.patch("sqlalchemy.orm.Session.commit")
+    return mock

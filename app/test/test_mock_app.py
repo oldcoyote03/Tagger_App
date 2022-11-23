@@ -70,7 +70,7 @@ def test_get_bookmark_thin(
 ):
     # successful get
     # prep mock
-    mock_get_sqlalchemy.return_value.get_or_404.return_value = mock_bookmark_object
+    mock_get_sqlalchemy_thin.return_value.get_or_404.return_value = mock_bookmark_object
 
     # test with mock
     response = client.get(url_for(
@@ -139,7 +139,7 @@ def test_delete_bookmark_commit_exc(
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj
-    assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
+    assert data_obj['message'] == "Internal Server Error"
 
 def test_delete_bookmark_commit_exc_thin(
         client,
@@ -164,7 +164,7 @@ def test_delete_bookmark_commit_exc_thin(
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj
-    assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
+    assert data_obj['message'] == "Internal Server Error"
 
 def test_get_bookmarks(
         client,

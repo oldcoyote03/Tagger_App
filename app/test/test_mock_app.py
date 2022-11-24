@@ -103,7 +103,7 @@ def test_get_bookmarks(
         bookmarks_obj,
         bookmarks_filter_obj
 ):
-    # successful get all
+    # get all
     # prep mock
     mock_get_sqlalchemy.all.return_value = bookmarks_obj
 
@@ -114,7 +114,7 @@ def test_get_bookmarks(
     data_obj = json.loads(data)
     assert len(data_obj) == 2
 
-    # successful get with filter
+    # get with filter, match
     # prep mock
     mock_get_sqlalchemy.all.return_value = None
     mock_get_sqlalchemy.filter_by.return_value = bookmarks_filter_obj
@@ -126,13 +126,24 @@ def test_get_bookmarks(
     data_obj = json.loads(data)
     assert len(data_obj) == 1
 
+    # get with filter, no match
+    # prep mock
+    mock_get_sqlalchemy.filter_by.return_value = []
+
+    url = "https://www.foo.com"
+    response = client.get(url_for('bookmarksresource') + "?url=" + url)
+    assert response.status_code == 200
+    data = response.get_data()
+    data_obj = json.loads(data)
+    assert len(data_obj) == 0
+
     # successful get with invalid filter
     # prep mock
     mock_get_sqlalchemy.filter_by.return_value = None
     mock_get_sqlalchemy.all.return_value = bookmarks_obj
 
     # test with mock
-    response = client.get(url_for('bookmarksresource') + "?invalid=" + url)
+    response = client.get(url_for('bookmarksresource') + "?foo=" + url)
     assert response.status_code == 200
     data = response.get_data()
     data_obj = json.loads(data)
@@ -170,3 +181,37 @@ def test_post_bookmark(
     assert response.status_code == 400
     data = parse_response_str(response)
     assert data == f"Bad Request: IntegrityError: Bookmark {payload['url']} may already exist."
+
+    # failed post: url attribute value is not string
+    mock_session_commit_sqlalchemy.side_effect = None
+    response = client.post(
+        url_for('bookmarksresource'),
+        json={ "url": 0 }
+    )
+    assert response.status_code == 422
+    data = response.get_data()
+    assert json.loads(data)
+    data_obj = json.loads(data)
+    assert 'errors' in data_obj
+    assert 'url' in data_obj['errors']
+    assert len(data_obj['errors']['url']) == 1
+    assert data_obj['errors']['url'][0] == "Not a valid string."
+
+    # failed post: url attribute missing
+    mock_session_commit_sqlalchemy.side_effect = None
+    unknown_field = "foo"
+    response = client.post(
+        url_for('bookmarksresource'),
+        json={ unknown_field: "https://www.bar.com" }
+    )
+    assert response.status_code == 422
+    data = response.get_data()
+    assert json.loads(data)
+    data_obj = json.loads(data)
+    assert 'errors' in data_obj
+    assert 'url' in data_obj['errors']
+    assert len(data_obj['errors']['url']) == 1
+    assert data_obj['errors']['url'][0] == "Missing data for required field."
+    assert unknown_field in data_obj['errors']
+    assert len(data_obj['errors'][unknown_field]) == 1
+    assert data_obj['errors'][unknown_field][0] == "Unknown field."

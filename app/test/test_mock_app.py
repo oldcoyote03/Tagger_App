@@ -85,7 +85,7 @@ def test_delete_bookmark(
     # failed get bookmark
     # prep mock
     mock_get_sqlalchemy.get_or_404.side_effect = not_found_exc
-    
+
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource',
@@ -125,7 +125,7 @@ def test_get_bookmarks(
     data = response.get_data()
     data_obj = json.loads(data)
     assert len(data_obj) == 1
-    
+
     # successful get with invalid filter
     # prep mock
     mock_get_sqlalchemy.filter_by.return_value = None
@@ -139,6 +139,7 @@ def test_get_bookmarks(
     assert len(data_obj) == 2
 
 def test_post_bookmark(
+    client,
     mock_session_add_sqlalchemy,
     mock_session_commit_sqlalchemy,
     integrity_error_exc
@@ -151,7 +152,7 @@ def test_post_bookmark(
     # test with mock
     payload = { "url": "https://www.foo.com" }
     response = client.post(
-        url_for('bookmarksresource'), 
+        url_for('bookmarksresource'),
         json=payload
     )
     assert response.status_code == 200
@@ -163,8 +164,9 @@ def test_post_bookmark(
 
     # test with mock
     response = client.post(
-        url_for('bookmarksresource'), 
+        url_for('bookmarksresource'),
         json=payload
     )
     assert response.status_code == 400
+    data = parse_response_str(response)
     assert data == f"Bad Request: IntegrityError: Bookmark {payload['url']} may already exist."

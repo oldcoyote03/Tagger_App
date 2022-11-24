@@ -41,8 +41,6 @@ class BookmarksResource(Resource):
             db.session.commit()
         except IntegrityError:
             return f"Bad Request: IntegrityError: Bookmark {args['url']} may already exist.", 400
-        except:
-            return 'Bad Request', 400
         return f"{bm_id}"
 
 

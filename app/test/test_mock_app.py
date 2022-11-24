@@ -33,82 +33,64 @@ def valid_uuid(s):
 def test_get_bookmark(
         client,
         mock_get_sqlalchemy,
-        mock_bookmark_object,
-        mock_bookmark_not_found_exc
+        bookmark_object,
+        not_found_exc
 ):
     # successful get
     # prep mock
-    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
+    mock_get_sqlalchemy.get_or_404.return_value = bookmark_object
 
     # test with mock
     response = client.get(url_for(
         'bookmarkresource',
-        bookmark_id=mock_bookmark_object.id
+        bookmark_id=bookmark_object.id
     ))
     assert response.status_code == 200
 
     # failed get
     # prep mock
-    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_exc
+    mock_get_sqlalchemy.get_or_404.side_effect = not_found_exc
 
     # test with mock
     response = client.get(url_for(
         'bookmarkresource',
-        bookmark_id=mock_bookmark_object.id
+        bookmark_id=bookmark_object.id
     ))
     assert response.status_code == 404
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj
     assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
-
-def test_get_bookmark_thin(
-        client,
-        mock_get_sqlalchemy_thin,
-        mock_bookmark_object,
-        mock_bookmark_not_found_exc
-):
-    # successful get
-    # prep mock
-    mock_get_sqlalchemy_thin.get_or_404.return_value = mock_bookmark_object
-
-    # test with mock
-    response = client.get(url_for(
-        'bookmarkresource',
-        bookmark_id=mock_bookmark_object.id
-    ))
-    assert response.status_code == 200
 
 def test_delete_bookmark(
         client,
         mock_get_sqlalchemy,
         mock_session_delete_sqlalchemy,
         mock_session_commit_sqlalchemy,
-        mock_bookmark_object,
-        mock_bookmark_not_found_exc,
-        mock_session_commit_sqlalchemy_thin
+        bookmark_object,
+        not_found_exc
 ):
     # success delete
     # prep mock
-    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
+    mock_get_sqlalchemy.get_or_404.return_value = bookmark_object
     mock_session_delete_sqlalchemy.return_value = None
     mock_session_commit_sqlalchemy.return_value = None
 
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource',
-        bookmark_id=mock_bookmark_object.id
+        bookmark_id=bookmark_object.id
     ))
     assert response.status_code == 204
 
     # failed get bookmark
     # prep mock
-    mock_get_sqlalchemy.get_or_404.side_effect = mock_bookmark_not_found_exc
+    mock_get_sqlalchemy.get_or_404.side_effect = not_found_exc
     
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource',
-        bookmark_id=mock_bookmark_object.id
+        bookmark_id=bookmark_object.id
     ))
     assert response.status_code == 404
     data = response.get_data()
@@ -116,65 +98,15 @@ def test_delete_bookmark(
     assert 'message' in data_obj
     assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
 
-def test_delete_bookmark_commit_exc(
-        client,
-        mock_get_sqlalchemy,
-        mock_session_delete_sqlalchemy,
-        mock_session_commit_sqlalchemy,
-        mock_bookmark_object,
-        mock_integrity_error
-):
-    # failed delete commit
-    # prep mock
-    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
-    mock_session_delete_sqlalchemy.return_value = None
-    mock_session_commit_sqlalchemy.side_effect = mock_integrity_error
-    
-    # test with mock
-    response = client.delete(url_for(
-        'bookmarkresource',
-        bookmark_id=mock_bookmark_object.id
-    ))
-    assert response.status_code == 500
-    data = response.get_data()
-    data_obj = json.loads(data)
-    assert 'message' in data_obj
-    assert data_obj['message'] == "Internal Server Error"
-
-def test_delete_bookmark_commit_exc_thin(
-        client,
-        mock_get_sqlalchemy,
-        mock_session_delete_sqlalchemy,
-        mock_session_commit_sqlalchemy_thin,
-        mock_bookmark_object,
-        mock_integrity_error
-):
-    # failed delete commit thin
-    # prep mock
-    mock_get_sqlalchemy.get_or_404.return_value = mock_bookmark_object
-    mock_session_delete_sqlalchemy.return_value = None
-    mock_session_commit_sqlalchemy_thin.side_effect = mock_integrity_error
-
-    # test with mock
-    response = client.delete(url_for(
-        'bookmarkresource',
-        bookmark_id=mock_bookmark_object.id
-    ))
-    assert response.status_code == 500
-    data = response.get_data()
-    data_obj = json.loads(data)
-    assert 'message' in data_obj
-    assert data_obj['message'] == "Internal Server Error"
-
 def test_get_bookmarks(
         client,
         mock_get_sqlalchemy,
-        mock_bookmarks_object,
-        mock_bookmarks_filter_object
+        bookmarks_object,
+        bookmarks_filter_object
 ):
     # successful get all
     # prep mock
-    mock_get_sqlalchemy.all.return_value = mock_bookmarks_object
+    mock_get_sqlalchemy.all.return_value = bookmarks_object
 
     # test with mock
     response = client.get(url_for('bookmarksresource'))
@@ -186,7 +118,7 @@ def test_get_bookmarks(
     # successful get with filter
     # prep mock
     mock_get_sqlalchemy.all.return_value = None
-    mock_get_sqlalchemy.filter_by.return_value = mock_bookmarks_filter_object
+    mock_get_sqlalchemy.filter_by.return_value = bookmarks_filter_object
 
     url = "https://www.foo.com"
     response = client.get(url_for('bookmarksresource') + "?url=" + url)
@@ -198,7 +130,7 @@ def test_get_bookmarks(
     # successful get with invalid filter
     # prep mock
     mock_get_sqlalchemy.filter_by.return_value = None
-    mock_get_sqlalchemy.all.return_value = mock_bookmarks_object
+    mock_get_sqlalchemy.all.return_value = bookmarks_object
 
     # test with mock
     response = client.get(url_for('bookmarksresource') + "?invalid=" + url)

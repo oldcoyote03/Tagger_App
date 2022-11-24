@@ -39,10 +39,10 @@ def app(request):
         test_app = create_app()
     return test_app
 
-# mock db objects
+# db objects
 
 @pytest.fixture
-def mock_bookmark_object():
+def bookmark_obj():
     bookmark = Bookmarks(
         id=uuid.uuid4(),
         url="https://www.foo.com",
@@ -52,17 +52,17 @@ def mock_bookmark_object():
 
 from werkzeug.exceptions import NotFound
 @pytest.fixture
-def mock_bookmark_not_found_exc():
+def not_found_exc():
     return NotFound
 
 from sqlalchemy.exc import IntegrityError
 @pytest.fixture
-def mock_integrity_error():
+def integrity_error_exc():
     return IntegrityError('Mock', ['mock'], IntegrityError)
 
 
 @pytest.fixture
-def mock_bookmarks_object():
+def bookmarks_object():
     bookmarks = []
     for name in ['foo', 'bar']:
         bookmarks.append(Bookmarks(
@@ -72,7 +72,7 @@ def mock_bookmarks_object():
     return bookmarks
 
 @pytest.fixture
-def mock_bookmarks_filter_object():
+def bookmarks_filter_object():
     bookmark = Bookmarks(
         id=uuid.uuid4(),
         url=f"https://www.foo.com"
@@ -82,41 +82,14 @@ def mock_bookmarks_filter_object():
 # mock actions
 # https://pytest-mock.readthedocs.io/en/latest/
 
-# flask_sqlalchemy as f(d) 
-# --> f.__init__.py --> from f.extension(f) import SQLAlchemy
-# --> in f.extension --> from f.model(f) import Model --> in f.model 
-# --> class Model --> def __init__(self): --> self.query = _QueryProperty
-# --> class _QueryProperty def __get__() returns instance of type Query
-# --> from f.query(f) import Query 
 @pytest.fixture
 def mock_get_sqlalchemy(mocker):
-    mock = mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value = mocker.Mock()
-    return mock
-
-@pytest.fixture
-def mock_get_sqlalchemy_thin(mocker):
     return mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value
 
-# sqlalchemy.orm as s(d)
-# --> s.__init__.py --> from s.session(f) import Session
-# --> in s.session --> class Session
-# def delete() returns type None
-# def commit() returns type None
 @pytest.fixture
 def mock_session_delete_sqlalchemy(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session.delete").return_value = mocker.Mock()
-    return mock
+    return mocker.patch("sqlalchemy.orm.Session.delete")
 
 @pytest.fixture
 def mock_session_commit_sqlalchemy(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session.commit").return_value = mocker.Mock()
-    return mock
-
-@pytest.fixture
-def mock_session_commit_integrity_error_sqlalchemy(mocker):
-    mock = mocker.patch("sqlalchemy.orm.Session.commit").side_effect = mocker.Mock()
-    return mock
-
-@pytest.fixture
-def mock_session_commit_sqlalchemy_thin(mocker):
     return mocker.patch("sqlalchemy.orm.Session.commit")

@@ -16,12 +16,11 @@ def test_endpoint(client):
 def parse_response_str(r):
     data = r.get_data()
     s = data.decode()
-    print(f"data: {data}; data.decode: {s}")
     s_split = s.split('"')
     r = ''
     if len(s_split) > 1:
         r = s_split[1]
-    return ''
+    return r
 
 def valid_uuid(s):
     try:
@@ -33,17 +32,17 @@ def valid_uuid(s):
 def test_get_bookmark(
         client,
         mock_get_sqlalchemy,
-        bookmark_object,
+        bookmark_obj,
         not_found_exc
 ):
     # successful get
     # prep mock
-    mock_get_sqlalchemy.get_or_404.return_value = bookmark_object
+    mock_get_sqlalchemy.get_or_404.return_value = bookmark_obj
 
     # test with mock
     response = client.get(url_for(
         'bookmarkresource',
-        bookmark_id=bookmark_object.id
+        bookmark_id=bookmark_obj.id
     ))
     assert response.status_code == 200
 
@@ -54,7 +53,7 @@ def test_get_bookmark(
     # test with mock
     response = client.get(url_for(
         'bookmarkresource',
-        bookmark_id=bookmark_object.id
+        bookmark_id=bookmark_obj.id
     ))
     assert response.status_code == 404
     data = response.get_data()
@@ -67,19 +66,19 @@ def test_delete_bookmark(
         mock_get_sqlalchemy,
         mock_session_delete_sqlalchemy,
         mock_session_commit_sqlalchemy,
-        bookmark_object,
+        bookmark_obj,
         not_found_exc
 ):
     # success delete
     # prep mock
-    mock_get_sqlalchemy.get_or_404.return_value = bookmark_object
+    mock_get_sqlalchemy.get_or_404.return_value = bookmark_obj
     mock_session_delete_sqlalchemy.return_value = None
     mock_session_commit_sqlalchemy.return_value = None
 
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource',
-        bookmark_id=bookmark_object.id
+        bookmark_id=bookmark_obj.id
     ))
     assert response.status_code == 204
 
@@ -90,7 +89,7 @@ def test_delete_bookmark(
     # test with mock
     response = client.delete(url_for(
         'bookmarkresource',
-        bookmark_id=bookmark_object.id
+        bookmark_id=bookmark_obj.id
     ))
     assert response.status_code == 404
     data = response.get_data()
@@ -101,12 +100,12 @@ def test_delete_bookmark(
 def test_get_bookmarks(
         client,
         mock_get_sqlalchemy,
-        bookmarks_object,
-        bookmarks_filter_object
+        bookmarks_obj,
+        bookmarks_filter_obj
 ):
     # successful get all
     # prep mock
-    mock_get_sqlalchemy.all.return_value = bookmarks_object
+    mock_get_sqlalchemy.all.return_value = bookmarks_obj
 
     # test with mock
     response = client.get(url_for('bookmarksresource'))
@@ -118,7 +117,7 @@ def test_get_bookmarks(
     # successful get with filter
     # prep mock
     mock_get_sqlalchemy.all.return_value = None
-    mock_get_sqlalchemy.filter_by.return_value = bookmarks_filter_object
+    mock_get_sqlalchemy.filter_by.return_value = bookmarks_filter_obj
 
     url = "https://www.foo.com"
     response = client.get(url_for('bookmarksresource') + "?url=" + url)
@@ -130,7 +129,7 @@ def test_get_bookmarks(
     # successful get with invalid filter
     # prep mock
     mock_get_sqlalchemy.filter_by.return_value = None
-    mock_get_sqlalchemy.all.return_value = bookmarks_object
+    mock_get_sqlalchemy.all.return_value = bookmarks_obj
 
     # test with mock
     response = client.get(url_for('bookmarksresource') + "?invalid=" + url)
@@ -139,22 +138,33 @@ def test_get_bookmarks(
     data_obj = json.loads(data)
     assert len(data_obj) == 2
 
-
-"""
 def test_post_bookmark(
-    mock_session_commit_integrity_error_sqlalchemy
+    mock_session_add_sqlalchemy,
+    mock_session_commit_sqlalchemy,
+    integrity_error_exc
 ):
     # successful post
     # prep mock
-
-    # failed post: duplicate url
-    mock_session_commit_integrity_error_sqlalchemy.side_effect = mock_integrity_error
+    mock_session_add_sqlalchemy.return_value = None
+    mock_session_commit_sqlalchemy.return_value = None
 
     # test with mock
-    response = client.delete(url_for(
-        'bookmarksresource',
-        bookmark_id=mock_bookmark_object.id
-    ))
+    payload = { "url": "https://www.foo.com" }
+    response = client.post(
+        url_for('bookmarksresource'), 
+        json=payload
+    )
+    assert response.status_code == 200
+    data = parse_response_str(response)
+    assert valid_uuid(data)
+
+    # failed post: duplicate url
+    mock_session_commit_sqlalchemy.side_effect = integrity_error_exc
+
+    # test with mock
+    response = client.post(
+        url_for('bookmarksresource'), 
+        json=payload
+    )
     assert response.status_code == 400
-    assert data == f"Bad Request: IntegrityError: Bookmark {mock_bookmark_obj.url} may already exist."
-"""
+    assert data == f"Bad Request: IntegrityError: Bookmark {payload['url']} may already exist."

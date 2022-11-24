@@ -62,7 +62,7 @@ def integrity_error_exc():
 
 
 @pytest.fixture
-def bookmarks_object():
+def bookmarks_obj():
     bookmarks = []
     for name in ['foo', 'bar']:
         bookmarks.append(Bookmarks(
@@ -72,7 +72,7 @@ def bookmarks_object():
     return bookmarks
 
 @pytest.fixture
-def bookmarks_filter_object():
+def bookmarks_filter_obj():
     bookmark = Bookmarks(
         id=uuid.uuid4(),
         url=f"https://www.foo.com"
@@ -89,6 +89,10 @@ def mock_get_sqlalchemy(mocker):
 @pytest.fixture
 def mock_session_delete_sqlalchemy(mocker):
     return mocker.patch("sqlalchemy.orm.Session.delete")
+
+@pytest.fixture
+def mock_session_add_sqlalchemy(mocker):
+    return mocker.patch("sqlalchemy.orm.Session.add")
 
 @pytest.fixture
 def mock_session_commit_sqlalchemy(mocker):

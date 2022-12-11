@@ -197,7 +197,7 @@ def test_post_bookmark(
     assert len(data_obj['errors']['url']) == 1
     assert data_obj['errors']['url'][0] == "Not a valid string."
 
-    # failed post: url attribute missing
+    # failed post: incorrect attribute
     mock_session_commit_sqlalchemy.side_effect = None
     unknown_field = "foo"
     response = client.post(

@@ -1,6 +1,6 @@
 """
 Testing the mock app 
-pytest /tagger_api/app/test/test_mock_app.py -v -s --env=dev
+pytest /tagger_api/test/test_mock_app.py -v -s --env=dev
 """
 
 import json

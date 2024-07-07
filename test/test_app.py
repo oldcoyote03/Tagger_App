@@ -1,6 +1,6 @@
 """
 Testing the app
-pytest /tagger_api/app/test/test_app.py -v -s --env=test
+pytest /tagger_api/test/test_app.py -v -s --env=test
  """
 
 import json

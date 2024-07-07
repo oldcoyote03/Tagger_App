@@ -1,12 +1,15 @@
+""" Main app module """
+
+import sys
+
 from flask import Flask
 from flask_restful import Api
 
 from app.schema import db, ma
 from app.api import BookmarksResource, BookmarkResource, TestResource
 
-import sys
-
 def create_app():
+    """ Create the app """
     app = Flask(__name__)
     app.config.from_object("settings")
     db.init_app(app)

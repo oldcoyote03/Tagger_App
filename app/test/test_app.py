@@ -1,10 +1,15 @@
-# pytest /tagger_api/app/test/test_app.py -v -s --env=test
+"""
+Testing the app
+pytest /tagger_api/app/test/test_app.py -v -s --env=test
+ """
 
-from flask import url_for
 import json
 import uuid
 
+from flask import url_for
+
 def test_endpoint(client):
+    """ Test the healthcheck endpoint """
     response = client.get(url_for('testresource'))
     assert response.status_code == 200
 
@@ -14,18 +19,21 @@ def test_endpoint(client):
     assert data_obj['msg'] == "This is the test endpoint"
 
 def valid_uuid(s):
+    """ Check if the string is a valid uuid """
     try:
         uuid.UUID(s)
         return True
-    except:
+    except ValueError:
         return False
 
 def parse_response_str(r):
+    """ Parse the response string """
     data = r.get_data()
     s = data.decode()
     return s.split('"')[1]
 
 def test_post_bookmarks(client):
+    """ Test the post bookmarks endpoint """
     global URL
     URL = "https://www.imdb.com"
     payload = { "url": URL }
@@ -38,6 +46,7 @@ def test_post_bookmarks(client):
     assert valid_uuid(data)
 
 def test_post_bookmarks_duplicate(client):
+    """ Test the post bookmarks endpoint with duplicate url """
     global URL
     payload = { "url": URL }
     response = client.post(
@@ -49,6 +58,7 @@ def test_post_bookmarks_duplicate(client):
     assert 'IntegrityError' in data
 
 def test_get_bookmarks(client):
+    """ Test the get bookmarks endpoint """
     response = client.get(url_for('bookmarksresource'))
     assert response.status_code == 200
 
@@ -60,6 +70,7 @@ def test_get_bookmarks(client):
     assert 'id' in BOOKMARK
 
 def test_get_bookmarks_url_filter(client):
+    """ Test the get bookmarks endpoint with url filter """
     # add another bookmark with different url
     payload = { "url": "https://www.billboard.com" }
     response = client.post(
@@ -86,6 +97,7 @@ def test_get_bookmarks_url_filter(client):
     assert data_obj[0]['id'] == BOOKMARK['id']
 
 def test_get_bookmark(client):
+    """ Test the get bookmark endpoint """
     global BOOKMARK
     response = client.get(url_for(
         'bookmarkresource', 
@@ -101,8 +113,8 @@ def test_get_bookmark(client):
     global URL
     assert URL == data_obj['url']
 
-# cleanup DB with the last test
 def cleanup(client):
+    """ Cleanup the DB with the last test """
     response = client.get(url_for('bookmarksresource'))
     data = response.get_data()
     data_obj = json.loads(data)
@@ -113,6 +125,7 @@ def cleanup(client):
         ))
 
 def test_delete_bookmark(client):
+    """ Test the delete bookmark endpoint """
     global BOOKMARK
     response = client.delete(url_for(
         'bookmarkresource',

@@ -1,10 +1,15 @@
-# pytest /tagger_api/app/test/test_mock_app.py -v -s --env=dev
+"""
+Testing the mock app 
+pytest /tagger_api/app/test/test_mock_app.py -v -s --env=dev
+"""
 
-from flask import url_for
 import json
 import uuid
 
+from flask import url_for
+
 def test_endpoint(client):
+    """ Test the healthcheck endpoint """
     response = client.get(url_for('testresource'))
     assert response.status_code == 200
 
@@ -14,6 +19,7 @@ def test_endpoint(client):
     assert data_obj['msg'] == "This is the test endpoint"
 
 def parse_response_str(r):
+    """ Parse the response string """
     data = r.get_data()
     s = data.decode()
     s_split = s.split('"')
@@ -23,18 +29,16 @@ def parse_response_str(r):
     return r
 
 def valid_uuid(s):
+    """ Check if the string is a valid uuid """
     try:
         uuid.UUID(s)
         return True
-    except:
+    except ValueError:
         return False
 
-def test_get_bookmark(
-        client,
-        mock_get_sqlalchemy,
-        bookmark_obj,
-        not_found_exc
-):
+def test_get_bookmark(client, mock_get_sqlalchemy, bookmark_obj, not_found_exc):
+    """ Test the get bookmark endpoint """
+
     # successful get
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = bookmark_obj
@@ -59,16 +63,14 @@ def test_get_bookmark(
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj
-    assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
+    expected_msg = "The requested URL was not found on the server. If you entered the URL " \
+                 + "manually please check your spelling and try again."
+    assert data_obj['message'] == expected_msg
 
-def test_delete_bookmark(
-        client,
-        mock_get_sqlalchemy,
-        mock_session_delete_sqlalchemy,
-        mock_session_commit_sqlalchemy,
-        bookmark_obj,
-        not_found_exc
-):
+def test_delete_bookmark(client, mock_get_sqlalchemy, mock_session_delete_sqlalchemy,
+                         mock_session_commit_sqlalchemy, bookmark_obj, not_found_exc):
+    """ Test the delete bookmark endpoint """
+
     # success delete
     # prep mock
     mock_get_sqlalchemy.get_or_404.return_value = bookmark_obj
@@ -95,14 +97,13 @@ def test_delete_bookmark(
     data = response.get_data()
     data_obj = json.loads(data)
     assert 'message' in data_obj
-    assert data_obj['message'] == "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again."
+    expected_msg = "The requested URL was not found on the server. If you entered the URL " \
+                 + "manually please check your spelling and try again."
+    assert data_obj['message'] == expected_msg
 
-def test_get_bookmarks(
-        client,
-        mock_get_sqlalchemy,
-        bookmarks_obj,
-        bookmarks_filter_obj
-):
+def test_get_bookmarks(client, mock_get_sqlalchemy, bookmarks_obj,bookmarks_filter_obj):
+    """ Test the get bookmarks endpoint """
+
     # get all
     # prep mock
     mock_get_sqlalchemy.all.return_value = bookmarks_obj
@@ -149,12 +150,10 @@ def test_get_bookmarks(
     data_obj = json.loads(data)
     assert len(data_obj) == 2
 
-def test_post_bookmark(
-    client,
-    mock_session_add_sqlalchemy,
-    mock_session_commit_sqlalchemy,
-    integrity_error_exc
-):
+def test_post_bookmark(client, mock_session_add_sqlalchemy, mock_session_commit_sqlalchemy,
+                       integrity_error_exc):
+    """ Test the post bookmark endpoint """
+
     # successful post
     # prep mock
     mock_session_add_sqlalchemy.return_value = None

@@ -1,14 +1,19 @@
+""" Schema for Bookmarks """
+
+from datetime import date
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
-from datetime import date
 
 db = SQLAlchemy()
 ma = Marshmallow()
 
 class Bookmarks(db.Model):
+    """ Bookmarks schema """
+
     id = db.Column(UUID(as_uuid=True), primary_key=True)
     url = db.Column(db.String, index=True, unique=True, nullable=False)
     created_at = db.Column(
@@ -21,5 +26,8 @@ class Bookmarks(db.Model):
 
 
 class BookmarksSchema(ma.SQLAlchemyAutoSchema):
+    """ Bookmarks schema """
+
     class Meta:
+        """ Meta class """
         model = Bookmarks

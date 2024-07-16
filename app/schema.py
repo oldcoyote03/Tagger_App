@@ -1,10 +1,7 @@
 """ Schema for Bookmarks """
 
-from datetime import date
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 

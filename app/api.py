@@ -38,7 +38,7 @@ class BookmarksResource(Resource):
         """ Post bookmark """
 
         bm_id = uuid.uuid4()
-        bm_id = str(bm_id)
+        # bm_id = str(bm_id)  # sqlite & str
         bookmark = Bookmarks(
             id=bm_id,
             url=args['url']
@@ -57,6 +57,7 @@ class BookmarkResource(Resource):
     def get(self, bookmark_id):
         """ Get bookmark """
 
+        # bookmark_id = uuid.UUID(bookmark_id)  # sqlite & UUID
         bookmark = Bookmarks.query.get_or_404(bookmark_id)
         return bookmark_schema.dump(bookmark)
 

@@ -6,11 +6,11 @@ RUN apt-get -y install git
 RUN python -m pip install --upgrade pip
 RUN mkdir /app
 WORKDIR /app
-COPY app app
-COPY test test
-COPY run.py run.py
-COPY settings.py settings.py
-COPY manage_db.py manage_db.py
+COPY . .
+# COPY test test
+# COPY run.py run.py
+# COPY settings.py settings.py
+# COPY manage_db.py manage_db.py
 COPY requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt

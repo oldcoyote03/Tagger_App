@@ -38,6 +38,7 @@ class BookmarksResource(Resource):
         """ Post bookmark """
 
         bm_id = uuid.uuid4()
+        bm_id = str(bm_id)
         bookmark = Bookmarks(
             id=bm_id,
             url=args['url']

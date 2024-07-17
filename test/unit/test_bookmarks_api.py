@@ -8,6 +8,7 @@ docker stop test-flask-api
 docker rm test-flask-api
 docker build -t test-flask-api .
 docker run -d -p 5000:5000 --name test-flask-api \
+    -v $(pwd):/app \
     -e SQLALCHEMY_DATABASE_URI='sqlite:///mydatabase.db' \
     test-flask-api
 docker exec -it test-flask-api /bin/bash

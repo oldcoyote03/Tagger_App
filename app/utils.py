@@ -16,5 +16,4 @@ def create_app():
     flask_api.add_resource(BookmarksResource, '/bookmarks')
     flask_api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
     flask_api.add_resource(TestResource, '/test')
-    print(f"flask app created: {app}\n")
     return app

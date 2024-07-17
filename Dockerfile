@@ -11,7 +11,7 @@ COPY . .
 # COPY run.py run.py
 # COPY settings.py settings.py
 # COPY manage_db.py manage_db.py
-COPY requirements.txt requirements.txt
+# COPY requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt
 CMD [ "sleep", "infinity" ]

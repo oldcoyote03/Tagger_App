@@ -13,9 +13,9 @@ ma = Marshmallow()
 class Bookmarks(db.Model):
     """ Bookmarks schema """
 
-    id = db.Column(Uuid(native_uuid=True), primary_key=True)
+    # id = db.Column(Uuid(native_uuid=True), primary_key=True)
     # id = db.Column(db.String, primary_key=True)
-    # id = db.Column(UUID(as_uuid=True), primary_key=True)  # behaves like UUID
+    id = db.Column(UUID(as_uuid=True), primary_key=True)  # behaves like UUID
     # id = db.Column(UUID(as_uuid=False), primary_key=True)  # behaves like str
     url = db.Column(db.String, index=True, unique=True, nullable=False)
     created_at = db.Column(

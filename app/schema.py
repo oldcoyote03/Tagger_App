@@ -13,11 +13,26 @@ ma = Marshmallow()
 class Bookmarks(db.Model):
     """ Bookmarks schema """
 
-    id = db.Column(UUIDType(), primary_key=True)
+    # cbd resolves to BINARY; sqlite resolves to ?
+    # no type conversion at API layer
+    id = db.Column(UUIDType(), primary_key=True)  # cdb resolves to BINARY
+    
+    # all resolve to CHAR
+    # no type conversions at API layer
     # id = db.Column(Uuid(native_uuid=True), primary_key=True)
+
+    # cdb    : resolves to UUID
+    # sqlite : behaves like UUID, i.e. GET /.../<id> convert to UUID
+    # id = db.Column(UUID(as_uuid=True), primary_key=True)
+
+    # all resolve to CHAR
+    # POST /... convert UUID to str
     # id = db.Column(db.String, primary_key=True)
-    # id = db.Column(UUID(as_uuid=True), primary_key=True)  # behaves like UUID
-    # id = db.Column(UUID(as_uuid=False), primary_key=True)  # behaves like str
+
+    # cdb    : resolves to CHAR
+    # sqlite : behaves like str, i.e. POST /... convert UUID to str
+    # id = db.Column(UUID(as_uuid=False), primary_key=True)
+
     url = db.Column(db.String, index=True, unique=True, nullable=False)
     created_at = db.Column(
         db.Date,

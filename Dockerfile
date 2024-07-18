@@ -13,6 +13,6 @@ COPY . .
 # COPY manage_db.py manage_db.py
 # COPY requirements.txt requirements.txt
 
-# RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt
 CMD [ "sleep", "infinity" ]
 # CMD [ "python", "./run.py"]

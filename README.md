@@ -30,9 +30,9 @@ Note: Since the CREATE TABLE operation occurs before the app is run, you cannot 
 
 ## VS Code Extensions:
 * Python
-** Python Debugger
-** Pylance
-** Pylint
+  * Python Debugger
+  * Pylance
+  * Pylint
 * Dev Containers
 * Cody AI
 

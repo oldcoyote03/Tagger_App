@@ -1,5 +1,6 @@
 Flask==3.0.3
 Flask-SQLAlchemy==3.1.1
+SQLAlchemy-Utils==0.41.2
 psycopg2-binary==2.9.9
 sqlalchemy-cockroachdb==2.0.2
 flask-marshmallow==1.2.1

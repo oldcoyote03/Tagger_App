@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+import logging
 
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.schema import CreateTable
@@ -9,13 +10,16 @@ from sqlalchemy.schema import CreateTable
 from app import create_app
 from app.schema import db
 
+app = create_app()
+logger = logging.getLogger("manage_db")
 
 def view_database_details():
     """ View database details """
-    print(f"Dialect : {db.engine.dialect.name}")
+    logger.info(f"Dialect: {db.engine.dialect.name}")
     for table_name in db.metadata.tables.keys():
         table = db.metadata.tables.get(table_name)
-        print(str(CreateTable(table).compile(db.engine)))
+        logger.info(f"{CreateTable(table).compile(db.engine)}")
+        logger.info(f"{table.primary_key}")
 
 def parse_args():
     """ Parse the arguments """
@@ -32,21 +36,21 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    app = create_app()
     with app.app_context():
         database_uri = app.config['SQLALCHEMY_DATABASE_URI']
         database_name = make_url(database_uri).database
-        print(f"Database Name: {database_name}")
+        logger.info(f"Database Name: {database_name}")
         if args.view:
+            logger.info("Displaying database tables...")
             pass
         elif args.reset:
-            print("Resetting database tables...")
+            logger.info("Resetting database tables...")
             db.drop_all()
             db.create_all()
         elif args.remove:
-            print("Removing database tables...")
+            logger.info("Removing database tables...")
             db.drop_all()
         else:
-            print("Initializing database tables...")
+            logger.info("Initializing database tables...")
             db.create_all()
         view_database_details()

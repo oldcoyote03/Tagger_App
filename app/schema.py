@@ -2,7 +2,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from sqlalchemy.types import Uuid
+from sqlalchemy_utils.types.uuid import UUIDType
 from sqlalchemy.sql import func
 
 db = SQLAlchemy()
@@ -11,7 +11,7 @@ ma = Marshmallow()
 class Bookmarks(db.Model):
     """ Bookmarks schema """
 
-    id = db.Column(Uuid(native_uuid=True), primary_key=True)
+    id = db.Column(UUIDType(), primary_key=True)
     url = db.Column(db.String, index=True, unique=True, nullable=False)
     created_at = db.Column(
         db.Date,

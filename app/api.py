@@ -1,6 +1,7 @@
 """ Boookmarks API """
 
 import uuid
+import logging
 
 from flask import jsonify
 from flask_restful import Resource
@@ -9,6 +10,8 @@ from webargs.flaskparser import use_args, parser, abort
 from sqlalchemy.exc import IntegrityError
 
 from app.schema import db, Bookmarks, BookmarksSchema
+
+logger = logging.getLogger(__name__)
 
 bookmark_schema = BookmarksSchema()
 bookmarks_schema = BookmarksSchema(many=True)
@@ -27,6 +30,7 @@ class BookmarksResource(Resource):
     def get(self, args):
         """ Get bookmarks """
 
+        logger.info(f"GET /bookmarks with args: {args}")
         if 'url' in args:
             url_bms = Bookmarks.query.filter_by(url=args['url'])
             return bookmarks_schema.dump(url_bms)
@@ -37,6 +41,7 @@ class BookmarksResource(Resource):
     def post(self, args):
         """ Post bookmark """
 
+        logger.info(f"POST /bookmarks with args: {args}")
         bm_id = uuid.uuid4()
         bookmark = Bookmarks(
             id=bm_id,
@@ -56,12 +61,14 @@ class BookmarkResource(Resource):
     def get(self, bookmark_id):
         """ Get bookmark """
 
+        logger.info(f"GET /bookmarks/{bookmark_id}")
         bookmark = Bookmarks.query.get_or_404(bookmark_id)
         return bookmark_schema.dump(bookmark)
 
     def delete(self, bookmark_id):
         """ Delete bookmark """
 
+        logger.info(f"DELETE /bookmarks/{bookmark_id}")
         bookmark = Bookmarks.query.get_or_404(bookmark_id)
         db.session.delete(bookmark)
         db.session.commit()

@@ -25,4 +25,13 @@ TODO:
 
 DONE: 
 * Development workflow
-* version upgrades
+* Version upgrades
+* Platform agnostic UUID field
+
+VSC:
+* Python
+** Python Debugger
+** Pylance
+** Pylint
+* Dev Containers
+* Cody AI

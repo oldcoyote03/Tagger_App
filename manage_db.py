@@ -42,7 +42,6 @@ if __name__ == '__main__':
         logger.info(f"Database Name: {database_name}")
         if args.view:
             logger.info("Displaying database tables...")
-            pass
         elif args.reset:
             logger.info("Resetting database tables...")
             db.drop_all()

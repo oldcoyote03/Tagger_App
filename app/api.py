@@ -75,14 +75,14 @@ class BookmarkResource(Resource):
         return '', 204
 
 
-class TestResource(Resource):
+class HealthcheckResource(Resource):
     """ Healthcheck Resource """
 
     def get(self):
         """ Healthcheck endpoint """
 
         output = { "msg": "This is the test endpoint" }
-        return jsonify(output)
+        return jsonify("OK")
 
 
 # This error handler is necessary for usage with Flask-RESTful

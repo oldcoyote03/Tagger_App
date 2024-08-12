@@ -1,35 +1,33 @@
 """
-Testing the mock app
-pytest /app/test/unit/test_bookmarks_api.py -v -s --env=dev
+pytest /app/tests/unit/test_bookmarks_api.py -v -s
 python manage_db.py
 python run.py
 
-docker stop test-flask-api
-docker rm test-flask-api
-docker build -t test-flask-api .
-docker run -d -p 5000:5000 --name test-flask-api \
+docker stop tagger-cont
+docker rm tagger-cont
+docker build -t tagger-img .
+docker run -d -p 5000:5000 --name tagger-cont \
     -v $(pwd):/app \
-    -e SQLALCHEMY_DATABASE_URI='sqlite:///mydatabase.db' \
-    test-flask-api
-docker exec -it test-flask-api /bin/bash
+    -e APP_ENV='local' \
+    tagger-img
+docker exec -it tagger-cont /bin/bash
 
 """
 
-import json
+# import json
 # import uuid
 
 from flask import url_for
 
-def test_endpoint(client):
+class TestHealthcheckEndpoint:
     """ Test the healthcheck endpoint """
-    response = client.get(url_for('testresource'))
-    assert response.status_code == 200
 
-    data = response.get_data()
-    data_obj = json.loads(data)
-    assert 'msg' in data_obj
-    assert data_obj['msg'] == "This is the test endpoint"
-
+    def test_healtcheck_endpoint(self, client):
+        """ Test the healthcheck endpoint """
+        response = client.get(url_for('healthcheckresource'))
+        assert response.status_code == 200
+        data = response.get_data()
+        assert data == b'"OK"\n'
 
 # import unittest
 # from unittest.mock import patch, MagicMock

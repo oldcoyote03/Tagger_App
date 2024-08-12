@@ -3,5 +3,11 @@
 **/*..py[cod]
 *$py.class
 
+# Log files
+**/*.log
+
+# Testing
+**/*.coverage
+
 # SQLite database file
 **/*.db

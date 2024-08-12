@@ -1,0 +1,5 @@
+{
+    "DATABASE": {
+        "URL": "cockroachdb://root@roach:26257/tagger_db?sslmode=disable"
+    }
+}

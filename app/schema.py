@@ -28,3 +28,7 @@ class BookmarksSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         """ Meta class """
         model = Bookmarks
+        # include_fk = True
+        # include_relationships = True
+
+    # column_name = ma.HyperlinkRelated("column_endpoint_url_for")

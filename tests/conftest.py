@@ -20,11 +20,10 @@ docker exec -it tagger-cont /bin/bash
 """
 
 import os
+import json
 import uuid
 import datetime
-from unittest import mock
 import logging
-from logging import config
 
 import pytest
 from werkzeug.exceptions import NotFound
@@ -37,7 +36,10 @@ from app.schema import Bookmarks
 
 
 pytest_plugins = [
-    'tests.unit.fixtures.app_utils',
+    "tests.unit.fixtures.fixture_api",
+    "tests.unit.fixtures.fixture_schema",
+    "tests.unit.fixtures.fixture_services",
+    "tests.unit.fixtures.fixture_utils",
 ]
 
 def pytest_addoption(parser):
@@ -57,7 +59,7 @@ def log(request):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     module_name = request.module.__name__
     test_logs_path = os.path.join(test_logs_dir, f"{module_name}-{now}.log")
-    config.dictConfig(get_logging_config(test_logs_path))
+    logging.config.dictConfig(get_logging_config(test_logs_path))
     return logging.getLogger(module_name)
 
 @pytest.fixture()
@@ -66,10 +68,14 @@ def app(request):
     return create_app(request.config.option.env)
 
 @pytest.fixture(autouse=True)
-def mock_os_environ():
+def mock_os_environ(mocker):
     """ Mock os.environ """
-    with mock.patch.dict(os.environ, {}, clear=True):
-        yield
+    return mocker.patch.dict(os.environ, {}, clear=True)
+
+@pytest.fixture(autouse=True)
+def mock_sys_argv(mocker):
+    """ Mock CLI args list """
+    return mocker.patch("sys.argv", [])
 
 @pytest.fixture
 def mock_os_path_exists(mocker):
@@ -92,6 +98,17 @@ def mock_json_loads(mocker):
     """ Mock json.loads """
     return mocker.patch("json.loads")
 
+@pytest.fixture
+def get_data():
+    """ Parse response function """
+    def func(response):
+        try:
+            return json.loads(response.get_data())
+        except json.decoder.JSONDecodeError:
+            return response.get_data().decode()
+    return func
+
+
 
 ############################################################################
 
@@ -100,8 +117,8 @@ def bookmark_obj():
     """ Bookmark object """
     bookmark = Bookmarks(
         id=uuid.uuid4(),
-        url="https://www.foo.com",
-        created_at=datetime.date.today()
+        url="https://www.test.com",
+        created_at=datetime.date(2000, 1, 1)
     )
     return bookmark
 
@@ -122,7 +139,8 @@ def bookmarks_obj():
     for name in ['foo', 'bar']:
         bookmarks.append(Bookmarks(
             id=uuid.uuid4(),
-            url=f"https://www.{name}.com"
+            url=f"https://www.{name}.com",
+            created_at=datetime.date(2000, 1, 1)
         ))
     return bookmarks
 
@@ -134,23 +152,3 @@ def bookmarks_filter_obj():
         url="https://www.foo.com"
     )
     return [bookmark]
-
-@pytest.fixture
-def mock_get_sqlalchemy(mocker):
-    """ Mock get_or_404 """
-    return mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value
-
-@pytest.fixture
-def mock_session_delete_sqlalchemy(mocker):
-    """ Mock session.delete """
-    return mocker.patch("sqlalchemy.orm.Session.delete")
-
-@pytest.fixture
-def mock_session_add_sqlalchemy(mocker):
-    """ Mock session.add """
-    return mocker.patch("sqlalchemy.orm.Session.add")
-
-@pytest.fixture
-def mock_session_commit_sqlalchemy(mocker):
-    """ Mock session.commit """
-    return mocker.patch("sqlalchemy.orm.Session.commit")

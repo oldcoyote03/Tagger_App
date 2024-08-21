@@ -1,4 +1,4 @@
-""" Manage Database """
+""" Run the app """
 
 from app import create_app
 from app.schema import manage_db
@@ -9,3 +9,4 @@ if __name__ == '__main__':
     args = parse_args()
     app = create_app()
     manage_db(app, args)
+    app.run(debug=True, host='0.0.0.0')

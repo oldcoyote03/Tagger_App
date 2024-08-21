@@ -2,8 +2,9 @@
 pytest /app/tests/unit/test_app_utils.py
 """
 
+import sys
 import pytest
-from app.utils import strtobool, flatten_dict
+from app.utils import strtobool, flatten_dict, parse_args
 
 
 @pytest.mark.parametrize(
@@ -76,3 +77,17 @@ def test_flatten_dict_separator(log):
     log.info(f"Flattened Dictionary : {flattened_dict}")
     log.info(f"Expected             : {expected}")
     assert flattened_dict == expected
+
+def test_parse_args(mock_argparse):
+    """ Test CLI args parser """
+    sys.argv = [1]
+    mock_argparse.return_value.parse_args.return_value = "test args"
+    result = parse_args()
+    assert result == "test args"
+
+def test_parse_args_exit(mock_argparse):
+    """ Test CLI args parser """
+    sys.argv = [1,2]
+    with pytest.raises(SystemExit):
+        parse_args()
+    mock_argparse.return_value.print_usage.assert_called_once()

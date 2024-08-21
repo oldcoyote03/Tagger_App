@@ -1,5 +1,8 @@
 """ App Utilities """
 
+import sys
+import argparse
+
 def strtobool(val):
     """ Convert a string representation of truth to true (1) or false (0) """
     val = val.lower()
@@ -22,3 +25,14 @@ def flatten_dict(parent_value, parent_key="", separator="_"):
         else:
             items.append((new_key.upper(), str(value)))
     return dict(items)
+
+def parse_args():
+    """ Parse the arguments """
+    parser = argparse.ArgumentParser(description='Manage the database')
+    parser.add_argument('--view', action='store_true', help='View the database tables')
+    parser.add_argument('--reset', action='store_true', help='Reset the database')
+    parser.add_argument('--remove', action='store_true', help='Reset the database')
+    if len(sys.argv) > 1:
+        sys.exit(parser.print_usage())
+    args = parser.parse_args()
+    return args

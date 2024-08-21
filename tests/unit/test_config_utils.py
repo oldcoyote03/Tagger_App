@@ -1,10 +1,11 @@
 """
 pytest /app/tests/unit/test_config_utils.py
+
 """
 
 import logging
 import os
-from unittest import mock
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -17,7 +18,7 @@ log = logging.getLogger(__name__)
 def test_load_configs(mock_os_path_join, mock_dynaconf):
     """ Test the healthcheck endpoint """
     mock_os_path_join.return_value = "/test/config/path.json"
-    mock_dynaconf_instances = [mock.Mock(), mock.Mock()]
+    mock_dynaconf_instances = [MagicMock(), MagicMock()]
     mock_dynaconf_instances[0].as_dict.return_value = {}
     mock_dynaconf_instances[1].as_dict.return_value = {
         "TESTKEY1": "ENV",

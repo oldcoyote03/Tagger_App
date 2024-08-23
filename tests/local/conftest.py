@@ -26,7 +26,7 @@ def mocked_session_wrapper(
     Session.begin side effect to create data
     cockroachdb : 
       - run_transaction expects a session that has not begun
-      - when a session that is based on in-memory DB is begins, there is no data
+      - when a session that is based on in-memory DB begins, there is no data
       - therefore, once run_transaction begins the session, we need to load the data
     pytest-sqlalchemy-mock : 
       - mocked_session begins the session in the fixture
@@ -43,12 +43,13 @@ def mocked_session_wrapper(
     mock_session_begin = mocker.patch("sqlalchemy.orm.session.Session.begin")
     mock_session_begin.side_effect = session_begin_wrapper
     mocked_session.close()
+    # run_transaction expects the session instance to have this attribute
+    mocked_session.bind.driver = mocked_session.bind.engine.driver
     return mock_session_begin
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def mock_sessionmaker_mock_session(mock_sessionmaker_services, mocked_session):
     """
-    Mock sessionmaker
     Pass in pytest-sqlalchemy-mock fixture mocked_session to sqlalchemy-cockroachdb run_transaction
     """
     mock_sessionmaker_services.return_value = mocked_session
@@ -56,21 +57,16 @@ def mock_sessionmaker_mock_session(mock_sessionmaker_services, mocked_session):
 
 @pytest.fixture
 def client_memory_class(
-    request, client,
-    mock_sessionmaker_mock_session,  # pylint: disable=unused-argument, disable=redefined-outer-name
-    mocked_session_wrapper,  # pylint: disable=unused-argument, disable=redefined-outer-name
-):
+    request, client, mock_sessionmaker_mock_session, mocked_session_wrapper,
+):  # pylint: disable=unused-argument, disable=redefined-outer-name
     """
     Set a ``client`` class attribute to current Flask test client::
 
     @pytest.mark.usefixtures('client_memory_class')
     class TestView:
-
-        def test_login(self, email, password):
-            credentials = {'email': email, 'password': password}
-            return self.client.post(url_for('login'), data=credentials)
-            assert self.login('foo@example.com', 'pass').status_code == 200
-
+        def test_resource(self):
+            resp = self.client.get(url_for('resource'), resource_id="resource_id")
+            assert resp.status_code == 200
     """
     if request.cls is not None:
         request.cls.client = client

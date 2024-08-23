@@ -3,13 +3,13 @@
 import uuid
 import logging
 
-from flask import jsonify, abort as flask_abort, Response
+from flask import abort as flask_abort, Response
 from flask_restful import Resource
 from webargs import fields
 from webargs.flaskparser import use_args, parser, abort as webargs_abort
 from sqlalchemy.exc import IntegrityError
 
-from app.schema import db, Bookmarks, BookmarksSchema
+from app.schema import Bookmarks, BookmarksSchema
 from app.services import BookmarksService, SqlaNotFound
 
 
@@ -21,6 +21,7 @@ bookmarks_schema = BookmarksSchema(many=True)
 bookmarks_json_args = {
     'url': fields.String(required=True)
 }
+
 bookmarks_query_args = {
     'url': fields.String(required=False)
 }
@@ -31,32 +32,21 @@ class BookmarksResource(Resource):
     @use_args(bookmarks_query_args, location="query")
     def get(self, args):
         """ Get bookmarks """
-
-        log.info(f"GET /bookmarks with args: {args}")
-        if 'url' in args:
-            url_bms = Bookmarks.query.filter_by(url=args['url'])
-            return bookmarks_schema.dump(url_bms)
-        all_bookmarks = Bookmarks.query.all()
-        all_bookmarks_dumped = bookmarks_schema.dump(all_bookmarks)
-        log.info(f"all_bookmarks_dumped {type(all_bookmarks_dumped)}: {all_bookmarks_dumped}")
-        return bookmarks_schema.dump(all_bookmarks)
+        log.info(f"GET /bookmarks with filter: {args}")
+        return BookmarksService.get_all(**args)
 
     @use_args(bookmarks_json_args, location="json")
     def post(self, args):
         """ Post bookmark """
 
-        log.info(f"POST /bookmarks with args: {args}")
+        log.info(f"POST /bookmarks with payload: {args}")
         bm_id = uuid.uuid4()
-        bookmark = Bookmarks(
-            id=bm_id,
-            url=args['url']
-        )
-        db.session.add(bookmark)
+        bookmark = Bookmarks(id=bm_id, url=args['url'])
         try:
-            db.session.commit()
-        except IntegrityError:
-            return f"Bad Request: IntegrityError: Bookmark {args['url']} may already exist.", 400
-        return f"{bm_id}"
+            BookmarksService.add(bookmark)
+        except IntegrityError as ie:
+            flask_abort(Response(f"Add bookmark error: {ie.orig}", 400))
+        return Response(f"{bm_id}", 200)
 
 
 class BookmarkResource(Resource):
@@ -68,7 +58,7 @@ class BookmarkResource(Resource):
         sqla_resp = BookmarksService.get(bookmark_id)
         if not sqla_resp:
             flask_abort(Response(f"Bookmark {bookmark_id} not found", 404))
-        return jsonify(sqla_resp)
+        return sqla_resp
 
     def delete(self, bookmark_id):
         """ Delete bookmark """
@@ -77,7 +67,7 @@ class BookmarkResource(Resource):
             BookmarksService.delete(bookmark_id)
         except SqlaNotFound as e:
             flask_abort(Response(str(e), 404))
-        return "", 204
+        return Response("", 204)
 
 
 class HealthcheckResource(Resource):

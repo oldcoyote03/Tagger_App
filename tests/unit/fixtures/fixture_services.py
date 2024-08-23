@@ -21,7 +21,7 @@ def mock_sqla_attrs():
 def mock_model(mocker):
     """ Mock Bookmarks """
     mock_generic = mocker.MagicMock()
-    mock_generic.__name__ = "mock Generic Model"
+    mock_generic.__name__ = "mock_model"
     mock_generic.id = "mock_id"
     return mock_generic
 
@@ -29,7 +29,7 @@ def mock_model(mocker):
 def mock_schema(mocker):
     """ Mock Bookmarks """
     mock_generic = mocker.MagicMock()
-    mock_generic.dump.return_value = "mock Generic Schema"
+    mock_generic.dump.return_value = "mock_schema"
     return mock_generic
 
 @pytest.fixture
@@ -61,30 +61,47 @@ def mock_db_services(mocker):
 @pytest.fixture
 def mock_session(mocker):
     """ Mock Session.get """
+    mock_scalars_instance = mocker.MagicMock()
+    mock_scalars_instance.all.return_value = "session_scalars_all"
+    mock_scalars = mocker.MagicMock()
+    mock_scalars.return_value = mock_scalars_instance
+    mock_session_attrs = {
+        "get.return_value": "session_get",
+        "delete.return_value": "session_delete",
+        "add.return_value": "session_add",
+        "scalars": mock_scalars,
+    }
     mock_session_obj = mocker.patch("sqlalchemy.orm.session.Session")
-    mock_session_obj.get.return_value = "session_get"
-    mock_session_obj.delete.return_value = "session_delete"
-    mock_session_obj.add.return_value = "session_add"
+    mock_session_obj.configure_mock(**mock_session_attrs)
     return mock_session_obj
 
 @pytest.fixture
-def mock_session_get(mocker):
+def mock_select(mocker):
     """ Mock Session.get """
-    sqla_session_get = mocker.patch("app.services.SqlaRunner.session_get")
-    sqla_session_get.return_value="session_get"
-    return sqla_session_get
+    mock_where_prev = "mock_where"
+    for _ in range(3):
+        mock_where_attrs = {
+            "__str__.return_value": "mock_stmt",
+            "where.return_value": mock_where_prev,
+        }
+        mock_where = mocker.MagicMock()
+        mock_where.configure_mock(**mock_where_attrs)
+        mock_where_prev = mock_where
+    mock_select_obj_attrs = {
+        "__str__.return_value": "mock_select",
+        "return_value": mock_where,
+    }
+    mock_select_obj = mocker.MagicMock()
+    mock_select_obj.configure_mock(**mock_select_obj_attrs)
+    mock_select_func = mocker.patch("app.services.select", return_value=mock_select_obj)
+    return mock_select_func
 
 @pytest.fixture
-def mock_session_delete(mocker):
-    """ Mock Session.delete """
-    sqla_session_delete = mocker.patch("app.services.SqlaRunner.session_delete")
-    sqla_session_delete.return_value="session_delete"
-    return sqla_session_delete
-
-@pytest.fixture
-def mock_session_add_sqlalchemy(mocker):
-    """ Mock session.add """
-    return mocker.patch("sqlalchemy.orm.session.Session.add")
+def mock_get_callback(mocker):
+    """ Mock Session.get """
+    mock_get_callback_func = mocker.patch("app.services.get_callback")
+    mock_get_callback_func.return_value = "mock_get_callback"
+    return mock_get_callback_func
 
 @pytest.fixture
 def mock_get_sqlalchemy(mocker):

@@ -3,6 +3,7 @@ pytest /app/tests/local/test_bookmarks_api.py
 
 """
 
+from uuid import UUID
 import pytest
 from flask import url_for
 from tests.local.data import MockData
@@ -47,18 +48,37 @@ class TestBookmarksApi:
         expected_data = f"SQL Not Found: model=Bookmarks; record ID: {test_bookmark_id}"
         assert get_data(response) == expected_data
 
-    # def test_get_bookmarks(self, client, log):
-    #     """ Test the get bookmarks endpoint - all bookmarks """
-    #     test_bookmark_raw = MockData.BOOKMARKS_DATA
-    #     test_bookmarks = []
-    #     for bm in test_bookmark_raw:
-    #         test_bm = dict(bm)
-    #         for key in bm:
-    #             bm[key] = str(bm[key])
-    #         test_bookmarks.append(test_bm)
-    #     log.info(f"test_bookmark: {test_bookmarks}")
-    #     response = client.get(
-    #         url_for('bookmarksresource')
-    #     )
-    #     log.info(f"resp: {json.loads(response.get_data())}")
-    #     assert json.loads(response.get_data()) == test_bookmarks
+    def test_add_bookmarks(self, get_data):
+        """ Test the add bookmarks endpoint """
+        test_bookmark = {"url": "test_url"}
+        response = self.client.post(  # pylint: disable=no-member
+            url_for('bookmarksresource'),
+            json=test_bookmark
+        )
+        assert response.status_code == 200
+        assert UUID(get_data(response))
+
+        # Adding the same bookmark URL raises an IntegrityError
+        response = self.client.post(  # pylint: disable=no-member
+            url_for('bookmarksresource'),
+            json=test_bookmark
+        )
+        assert response.status_code == 400
+        assert get_data(response) == "Add bookmark error: UNIQUE constraint failed: bookmarks.url"
+
+    def test_get_bookmarks_no_filter(self, get_data):
+        """ Test the get bookmarks endpoint - all bookmarks """
+        test_bookmarks = MockData.BOOKMARKS_DATA
+        response = self.client.get(url_for('bookmarksresource'))  # pylint: disable=no-member        
+        assert response.status_code == 200
+        assert len(get_data(response)) == len(test_bookmarks)
+
+    def test_get_bookmarks_filter(self, get_data):
+        """ Test the get bookmarks endpoint - filter by URL """
+        test_bookmarks = MockData.BOOKMARKS_DATA
+        response = self.client.get(  # pylint: disable=no-member
+            f"{url_for('bookmarksresource')}?url={test_bookmarks[0].get('url')}"
+        )
+        assert response.status_code == 200
+        assert len(get_data(response)) == 1
+        assert get_data(response)[0].get("url") == test_bookmarks[0].get("url")

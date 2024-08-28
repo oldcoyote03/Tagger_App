@@ -1,65 +1,85 @@
 """ Boomkarks resource fixtures """
 
-from uuid import UUID
 import pytest
-from app.api import BookmarkResource, BookmarksResource
+from webargs import fields
+from app.api import register_api
+
 
 @pytest.fixture
-def bookmark_resource():
-    """ BookmarkResource """
-    return BookmarkResource()
+def mock_service(mocker):
+    """ Mock Bookmarks """
+    mock_service_class = mocker.MagicMock()
+    mock_service_attrs = {
+        "model.return_value": "mock_model_instance",
+        "get_name.return_value": "example",
+        "get.return_value": {"get": "item"},
+        "delete.return_value": "service_delete",
+        "add.return_value": "service_add",
+        "get_all.return_value": [{"get_all": "items"}],
+        "json_args": {"json": fields.String(required=True)},
+        "query_args": {"query": fields.String(required=False)},
+    }
+    mock_service_class.configure_mock(**mock_service_attrs)
+    return mock_service_class
 
 @pytest.fixture
-def bookmarks_resource():
-    """ BookmarksResource """
-    return BookmarksResource()
-
-@pytest.fixture
-def mock_bookmarks_api(mocker):
-    """ BookmarkResource """
-    mock_bookmark = mocker.patch("app.api.Bookmarks", return_value=mocker.MagicMock())
-    mock_bookmark.return_value.url = "bookmark_url"
-    return mock_bookmark
+def client_unit_class(request, app, mock_service):  # pylint: disable=redefined-outer-name
+    """ Unit test client """
+    if request.cls is not None:
+        register_api(app, mock_service)
+        with app.test_client() as client:
+            request.cls.client = client
 
 @pytest.fixture
 def mock_uuid_api(mocker):
-    """ BookmarkResource """
-    mock_uuid = mocker.patch("app.api.uuid.uuid4")
-    mock_uuid.return_value = UUID("482f6c24-475b-4135-8316-c84972c40fab")
-    return mock_uuid
+    """ Mock uuid """
+    return mocker.patch("app.api.uuid.uuid4", return_value="mock_uuid")
 
 @pytest.fixture
-def mock_bookmarks_service_api(mocker):
-    """ Mock Bookmarks """
-    mock_bookmarks_service = mocker.patch("app.api.BookmarksService")
-    mock_bookmarks_service.get.return_value = {"get": "bookmark"}
-    mock_bookmarks_service.delete.return_value = "bookmarks_service_delete"
-    mock_bookmarks_service.add.return_value = "bookmarks_service_add"
-    mock_bookmarks_service.get_all.return_value = {"get_all": "bookmarks"}
-    mock_bookmarks_service.filter_by.return_value = "bookmarks_service_filter_by"
-    return mock_bookmarks_service
+def mock_app_api(mocker):
+    """ Mock Flask app """
+    mock_app = mocker.MagicMock()
+    mock_app.add_url_rule.return_value = "mock_app_add_url_rule"
+    return mock_app
 
 @pytest.fixture
-def mock_bookmark_schema(mocker):
-    """ DEPRECATED: Mock Bookmark schema """
-    return mocker.patch("app.api.bookmark_schema")
+def mock_item_api(mocker):
+    """ Mock ItemAPI """
+    mock_item_class = mocker.patch("app.api.ItemAPI")
+    mock_item_class.as_view.return_value = "mock_item_api_as_view"
+    return mock_item_class
 
 @pytest.fixture
-def mock_bookmark_schema_dump(mocker):
-    """ DEPRECATED: Mock Bookmark schema dump """
-    return mocker.patch("app.api.bookmark_schema.dump")
+def mock_group_api(mocker):
+    """ Mock GroupAPI """
+    mock_group_class = mocker.patch("app.api.GroupAPI")
+    mock_group_class.as_view.return_value = "mock_group_api_as_view"
+    return mock_group_class
 
 @pytest.fixture
-def mock_sessionmaker_bm_resource(mocker):
-    """ DEPRECATED: Mock sessionmaker """
-    return mocker.patch("app.api.sessionmaker")
+def mock_healthcheck(mocker):
+    """ Mock Healthcheck """
+    mock_healthcheck_class = mocker.patch("app.api.HealthcheckView")
+    mock_healthcheck_class.as_view.return_value = "mock_healthcheck_as_view"
+    return mock_healthcheck_class
 
 @pytest.fixture
-def mock_db_engine_bm_resource(mocker):
-    """ DEPRECATED: Mock db """
-    return mocker.patch("app.api.db.engine")
+def mock_use_args(mocker):
+    """ Mock use_args """
+    return mocker.patch("app.api.use_args")
 
 @pytest.fixture
-def mock_db_bm_resource(mocker):
-    """ DEPRECATED: Mock bookmark schema """
-    return mocker.patch("app.api.db")
+def mock_use_args_wrapper(mocker):
+    """ Mock use_args_wrapper """
+    wrapper_return = mocker.MagicMock(return_value="callable")
+    return mocker.patch("app.api.use_args_wrapper", return_value=wrapper_return)
+
+@pytest.fixture
+def mock_parsing_error(mocker):
+    """ Mock parsing error """
+    return mocker.MagicMock(messages={"json": "parsing_error"})
+
+@pytest.fixture
+def mock_webargs_abort(mocker):
+    """ Mock webargs abort """
+    return mocker.patch("app.api.webargs_abort", return_value="abort")

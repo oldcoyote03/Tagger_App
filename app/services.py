@@ -1,9 +1,11 @@
 """ Bookmarks Service """
 
+import os
 import logging
 from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_cockroachdb import run_transaction
+from webargs import fields
 from app.schema import db, Bookmarks, BookmarksSchema
 
 
@@ -18,7 +20,13 @@ class SqlaNotFound(Exception):
 
 def rt_wrapper(callback, *args, **kwargs):
     """ run_transaction wrapper for SQLAlchemy clients """
-    return run_transaction(sessionmaker(db.engine), lambda s: callback(s, *args, **kwargs))
+    # log.info(f"conn type                    : {type(conn)}")  # temp
+    # log.info(f"conn.bind.driver             : {conn.bind.driver}")  # temp
+    return run_transaction(
+        sessionmaker(db.engine),
+        lambda s: callback(s, *args, **kwargs),
+        max_retries=os.environ.get("DATABASE_MAX_RETRIES", 0),
+    )
 
 def get_callback(session, model, record_id):
     """ Get a model record by id """
@@ -47,6 +55,11 @@ class SqlaRunner:
     """ SQLAlchemy interface """
 
     @classmethod
+    def get_name(cls):
+        """ Model name """
+        return cls.model.__name__.lower()  # pylint: disable=no-member
+
+    @classmethod
     def get(cls, record_id):
         """ Get a model record by id """
         return cls.schema.dump(rt_wrapper(get_callback, cls.model, record_id))  # pylint: disable=no-member
@@ -72,3 +85,5 @@ class BookmarksService(SqlaRunner):
     model = Bookmarks
     schema = BookmarksSchema()
     schema_list = BookmarksSchema(many=True)
+    query_args = {'url': fields.String(required=False)}
+    json_args = {'url': fields.String(required=True)}

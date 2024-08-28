@@ -35,6 +35,12 @@ class TestSqlaRunner:
         mock_callback.assert_called_with(sessionmaker_resp, *args, **kwargs)
         assert resp == test_resp
 
+    def test_get_name(self, mock_model, mock_sqla_attrs):  # pylint: disable=unused-argument
+        """ Test SqlaRunner.get_name """
+        SqlaRunner.model = mock_model
+        resp = SqlaRunner.get_name()
+        assert resp == mock_model.__name__.lower()
+
     def test_get_callback(self, mock_session, mock_model):
         """ Test the get callback """
         test_record_id = "test_record_id"

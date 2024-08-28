@@ -1,15 +1,11 @@
 """ Main app module """
 
-import os
 import logging
-from logging import config as logging_config
-
 from flask import Flask
-from flask_restful import Api
-
 from app.config import get_config
 from app.schema import db, ma
-from app.api import BookmarksResource, BookmarkResource, HealthcheckResource
+from app.api import register_healthcheck, register_api
+from app.services import BookmarksService
 
 
 logger = logging.getLogger("create_app")
@@ -21,9 +17,7 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config_obj)
     db.init_app(app)
-    flask_api = Api(app)
     ma.init_app(app)
-    flask_api.add_resource(BookmarksResource, '/bookmarks')
-    flask_api.add_resource(BookmarkResource, '/bookmarks/<bookmark_id>')
-    flask_api.add_resource(HealthcheckResource, '/healthcheck')
+    register_healthcheck(app)
+    register_api(app, BookmarksService)
     return app

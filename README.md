@@ -13,10 +13,12 @@ Options for created_at field:
 Note: Since the CREATE TABLE operation occurs before the app is run, you cannot use the server_default=sqlalchemy.sql.func.current_date since this injects the CURRENT_DATE() function into the CREATE TABLE operation (which is done already).
 
 ## TODO:
-* Tags model
-* Flask SQLAlchemy Marshmallow CockroachDB
+* Dataclass / Mapped Column
 * Build pipeline
 * User model
+* User auth
+* Flask SQLAlchemy Marshmallow CockroachDB
+* Tags model
 * Boilerplate
 
 ## DONE: 
@@ -30,6 +32,7 @@ Note: Since the CREATE TABLE operation occurs before the app is run, you cannot 
   * run_transaction logging decorator
   * All endpoints
 * Local tests
+* ModelView
 
 
 ## VS Code Extensions:

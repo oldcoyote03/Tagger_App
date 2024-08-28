@@ -24,6 +24,7 @@ import json
 import uuid
 import datetime
 import logging
+import logging.config
 
 import pytest
 from werkzeug.exceptions import NotFound
@@ -62,9 +63,9 @@ def log(request):
     logging.config.dictConfig(get_logging_config(test_logs_path))
     return logging.getLogger(module_name)
 
-@pytest.fixture()
+@pytest.fixture
 def app(request):
-    """ Create a API client fixture """
+    """ For the Pytest-Flask API client fixture """
     return create_app(request.config.option.env)
 
 @pytest.fixture(autouse=True)
@@ -108,6 +109,11 @@ def get_data():
             return response.get_data().decode()
     return func
 
+@pytest.fixture
+def integrity_error_exc():
+    """ Integrity error exception """
+    return IntegrityError('Mock', ['mock'], IntegrityError)
+
 
 
 ############################################################################
@@ -126,11 +132,6 @@ def bookmark_obj():
 def not_found_exc():
     """ Not found exception """
     return NotFound
-
-@pytest.fixture
-def integrity_error_exc():
-    """ Integrity error exception """
-    return IntegrityError('Mock', ['mock'], IntegrityError)
 
 @pytest.fixture
 def bookmarks_obj():

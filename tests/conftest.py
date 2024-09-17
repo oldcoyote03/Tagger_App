@@ -2,6 +2,7 @@
 Pytest fixtures 
 
 pytest /app/tests/unit --cov=app --cov-report=term-missing
+--env=local
 -v : method level detail
 -s : logs
 

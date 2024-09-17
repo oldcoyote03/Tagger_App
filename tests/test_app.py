@@ -38,7 +38,7 @@ def test_post_bookmarks(client):
     URL = "https://www.imdb.com"
     payload = { "url": URL }
     response = client.post(
-        url_for('bookmarksresource'), 
+        url_for('bookmarksresource'),
         json=payload
     )
     assert response.status_code == 200
@@ -74,7 +74,7 @@ def test_get_bookmarks_url_filter(client):
     # add another bookmark with different url
     payload = { "url": "https://www.billboard.com" }
     response = client.post(
-        url_for('bookmarksresource'), 
+        url_for('bookmarksresource'),
         json=payload
     )
     assert response.status_code == 200
@@ -100,9 +100,9 @@ def test_get_bookmark(client):
     """ Test the get bookmark endpoint """
     global BOOKMARK
     response = client.get(url_for(
-        'bookmarkresource', 
+        'bookmarkresource',
         bookmark_id=BOOKMARK['id']
-    ))    
+    ))
     assert response.status_code == 200
 
     data = response.get_data()
@@ -132,11 +132,11 @@ def test_delete_bookmark(client):
         bookmark_id=BOOKMARK['id']
     ))
     assert response.status_code == 204
-    
+
     response = client.get(url_for(
         'bookmarkresource', 
         bookmark_id=BOOKMARK['id']
-    ))    
+    ))
     assert response.status_code == 404
 
     # cleanup for entire suite

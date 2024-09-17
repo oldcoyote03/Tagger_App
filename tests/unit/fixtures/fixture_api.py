@@ -10,12 +10,12 @@ def mock_service(mocker):
     """ Mock Bookmarks """
     mock_service_class = mocker.MagicMock()
     mock_service_attrs = {
-        "model.return_value": "mock_model_instance",
+        "model.return_value": mocker.MagicMock(id="mock_model_instance_id"),
         "get_name.return_value": "example",
         "get.return_value": {"get": "item"},
         "delete.return_value": "service_delete",
         "add.return_value": "service_add",
-        "get_all.return_value": [{"get_all": "items"}],
+        "get_all.return_value": [{"id": "test_id"}],
         "json_args": {"json": fields.String(required=True)},
         "query_args": {"query": fields.String(required=False)},
     }
@@ -29,11 +29,6 @@ def client_unit_class(request, app, mock_service):  # pylint: disable=redefined-
         register_api(app, mock_service)
         with app.test_client() as client:
             request.cls.client = client
-
-@pytest.fixture
-def mock_uuid_api(mocker):
-    """ Mock uuid """
-    return mocker.patch("app.api.uuid.uuid4", return_value="mock_uuid")
 
 @pytest.fixture
 def mock_app_api(mocker):

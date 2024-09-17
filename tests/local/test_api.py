@@ -19,9 +19,9 @@ class TestExampleApi:
         test_item_raw = MockData.EXAMPLE_DATA[1]
         test_item = {
             "id": str(test_item_raw.get("id")),
-            "attr_str": test_item_raw.get("attr_str"),
-            "attr_int": test_item_raw.get("attr_int"),
-            "attr_bool": test_item_raw.get("attr_bool"),
+            "name": test_item_raw.get("name"),
+            "flag": test_item_raw.get("flag"),
+            "quantity": test_item_raw.get("quantity"),
             "created_at": str(test_item_raw.get("created_at")),
         }
         response = self.client.get(url_for("example-item", item_id=test_item.get("id")))  # pylint: disable=no-member
@@ -46,17 +46,22 @@ class TestExampleApi:
         expected_data = f"SQL Not Found: model=Example; record ID: {test_item_id}"
         assert get_data(response) == expected_data
 
-    def test_add_item(self, get_data):
+    def test_add_item(self, get_data, log):
         """ Test the add item endpoint """
-        test_item = {"attr_str": "test_attr_str"}
+        test_item = {
+            "name": "test_name",
+            "flag": True,
+            "quantity": 1,
+        }
         response = self.client.post(url_for("example-group"), json=test_item)  # pylint: disable=no-member
         assert response.status_code == 200
+        log.info(f"response: {get_data(response)}")
         assert UUID(get_data(response))
 
         # Adding the same item raises an IntegrityError
         response = self.client.post(url_for("example-group"), json=test_item)  # pylint: disable=no-member
         assert response.status_code == 400
-        expected_exc = "Add example error: UNIQUE constraint failed: example.attr_str"
+        expected_exc = "Add example error: UNIQUE constraint failed: example.name"
         assert get_data(response) == expected_exc
 
     def test_get_group_no_filter(self, get_data):

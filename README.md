@@ -13,7 +13,6 @@ Options for created_at field:
 Note: Since the CREATE TABLE operation occurs before the app is run, you cannot use the server_default=sqlalchemy.sql.func.current_date since this injects the CURRENT_DATE() function into the CREATE TABLE operation (which is done already).
 
 ## TODO:
-* Dataclass / Mapped Column
 * Build pipeline
 * User model
 * User auth
@@ -33,6 +32,7 @@ Note: Since the CREATE TABLE operation occurs before the app is run, you cannot 
   * All endpoints
 * Local tests
 * ModelView
+* Dataclass / Mapped Column
 
 
 ## VS Code Extensions:

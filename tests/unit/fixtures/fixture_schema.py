@@ -4,11 +4,6 @@ import pytest
 
 
 @pytest.fixture
-def mock_base_model_schema(mocker):
-    """ Mock BaseModel """
-    return mocker.patch("app.schema.BaseModel")
-
-@pytest.fixture
 def mock_db_schema(mocker):
     """ Mock db """
     mock_db_engine_attrs = {

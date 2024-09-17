@@ -1,6 +1,15 @@
-""" Boookmarks API """
+"""
+### Generic API
+* The API classes have an instance attribute ``service``
+* The API classes require the ``service`` to have the following attributes
+  * ``model``: SQLAlchemy model
+  * ``schema``: Marshmallow schema
+  * ``schema_list``: Marshmallow schema for many records
+  * ``query_args``: Webargs URI query arguments
+  * ``json_args``: Webargs JSON payload arguments
 
-import uuid
+"""
+
 import logging
 from functools import wraps
 from flask import abort as flask_abort, Response
@@ -62,8 +71,8 @@ class ItemAPI(MethodView):
         log.info(f"DELETE /{self.service.get_name()}/{item_id}")
         try:
             self.service.delete(item_id)
-        except SqlaNotFound as e:
-            flask_abort(Response(str(e), 404))
+        except SqlaNotFound:
+            flask_abort(Response(f"{self.service.get_name()} {item_id} not found", 404))
         return Response("", 204)
 
 
@@ -83,16 +92,12 @@ class GroupAPI(MethodView):
     def post(self, args):
         """ Post item """
         log.info(f"POST /{self.service.get_name()} with payload: {args}")
-        item_id = uuid.uuid4()
-        item = self.service.model(id=item_id, **args)
+        item = self.service.model(**args)
         try:
             self.service.add(item)
         except IntegrityError as ie:
-            log.info(f"integrity error      : {ie}")
-            log.info(f"integrity error dir  : {dir(ie)}")
-            log.info(f"integrity error orig : {ie.orig}")
             flask_abort(Response(f"Add {self.service.get_name()} error: {ie.orig}", 400))
-        return Response(str(item_id), 200)
+        return Response(str(self.service.get_all(**args)[0].get("id")), 200)
 
 
 class HealthcheckView(MethodView):

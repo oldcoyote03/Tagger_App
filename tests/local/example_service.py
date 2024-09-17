@@ -1,14 +1,18 @@
 """ Example servide """
 
+from sqlalchemy.orm import Mapped, mapped_column
 from webargs import fields
-from app.schema import db, ma, BaseModel
+from app.schema import db, ma, UniqueText, UuidPk, CurrentDate, BoolNullable, IntNullable
 from app.services import SqlaRunner
 
-class Example(BaseModel):
+
+class Example(db.Model):
     """ Example model """
-    name = db.Column(db.String, index=True, unique=True, nullable=False)
-    flag = db.Column(db.Boolean, nullable=True)
-    quantity = db.Column(db.Integer, nullable=True)
+    name: Mapped[UniqueText]
+    flag: Mapped[BoolNullable]
+    quantity: Mapped[IntNullable]
+    id: Mapped[UuidPk] = mapped_column(init=False)
+    created_at: Mapped[CurrentDate] = mapped_column(init=False)
 
 class ExampleSchema(ma.SQLAlchemyAutoSchema):
     """ Example schema """

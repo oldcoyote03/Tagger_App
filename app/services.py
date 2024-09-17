@@ -28,9 +28,9 @@ def rt_wrapper(callback, *args, **kwargs):
         max_retries=os.environ.get("DATABASE_MAX_RETRIES", 0),
     )
 
-def get_callback(session, model, record_id):
+def get_callback(session, model, schema, record_id):
     """ Get a model record by id """
-    return session.get(model, record_id)
+    return schema.dump(session.get(model, record_id))
 
 def delete_callback(session, model, record_id):
     """ Delete a model record """
@@ -43,12 +43,12 @@ def add_callback(session, record):
     """ Add a record """
     session.add(record)
 
-def get_all_callback(session, model, **filters):
+def get_all_callback(session, model, schema, **filters):
     """ Get all model records """
     stmt = select(model)
     for key, value in filters.items():
         stmt = stmt.where(getattr(model, key) == value)
-    return session.scalars(stmt).all()
+    return schema.dump(session.scalars(stmt).all())
 
 
 class SqlaRunner:
@@ -62,7 +62,7 @@ class SqlaRunner:
     @classmethod
     def get(cls, record_id):
         """ Get a model record by id """
-        return cls.schema.dump(rt_wrapper(get_callback, cls.model, record_id))  # pylint: disable=no-member
+        return rt_wrapper(get_callback, cls.model, cls.schema, record_id)  # pylint: disable=no-member
 
     @classmethod
     def delete(cls, record_id):
@@ -77,7 +77,7 @@ class SqlaRunner:
     @classmethod
     def get_all(cls, **filters):
         """ Get a model record by id """
-        return cls.schema_list.dump(rt_wrapper(get_all_callback, cls.model, **filters))  # pylint: disable=no-member
+        return rt_wrapper(get_all_callback, cls.model, cls.schema_list, **filters)  # pylint: disable=no-member
 
 
 class BookmarksService(SqlaRunner):

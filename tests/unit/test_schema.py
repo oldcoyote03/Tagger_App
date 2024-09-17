@@ -8,7 +8,7 @@ import pytest
 from app.schema import Bookmarks, view_database_details, manage_db
 
 
-def test_bookmarks_repr(mock_base_model_schema):  # pylint: disable=unused-argument
+def test_bookmarks_repr():
     """ Test Bookmarks repr """
     test_bookmarks = Bookmarks(url="test url")
     test_input = "test id"

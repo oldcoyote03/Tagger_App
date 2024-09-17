@@ -23,13 +23,13 @@ class TestSqlaRunner:
         """ Test the run_transaction method """
         sessionmaker_resp = "test_session"
         mock_sessionmaker_services.return_value = sessionmaker_resp
-        rt_side_effect = lambda session, lambda_callback: lambda_callback(session)  # pylint: disable=unnecessary-lambda-assignment
+        rt_side_effect = lambda session, lambda_callback, max_retries: lambda_callback(session)  # pylint: disable=unnecessary-lambda-assignment
         mock_run_transaction_services.side_effect = rt_side_effect
         test_resp = "test_response"
         original_callback = lambda s, *args, **kwargs: test_resp  # pylint: disable=unnecessary-lambda-assignment
         mock_callback = mock.MagicMock(side_effect=original_callback)
         resp = rt_wrapper(mock_callback, *args, **kwargs)
-        mock_run_transaction_services.assert_called_with(sessionmaker_resp, mock.ANY)
+        mock_run_transaction_services.assert_called_with(sessionmaker_resp, mock.ANY, max_retries=0)
         mock_sessionmaker_services.assert_called_with(mock_db_services.engine)
         log.info(f"mock_callback.call_args: {mock_callback.call_args}")
         mock_callback.assert_called_with(sessionmaker_resp, *args, **kwargs)
@@ -41,12 +41,13 @@ class TestSqlaRunner:
         resp = SqlaRunner.get_name()
         assert resp == mock_model.__name__.lower()
 
-    def test_get_callback(self, mock_session, mock_model):
+    def test_get_callback(self, mock_session, mock_model, mock_schema):
         """ Test the get callback """
         test_record_id = "test_record_id"
-        resp = get_callback(mock_session, mock_model, test_record_id)
+        resp = get_callback(mock_session, mock_model, mock_schema, test_record_id)
         mock_session.get.assert_called_with(mock_model, test_record_id)
-        assert resp == mock_session.get.return_value
+        mock_schema.dump.assert_called_with(mock_session.get.return_value)
+        assert resp == mock_schema.dump.return_value
 
     def test_get(self, mock_rt_wrapper, mock_model, mock_schema, mock_sqla_attrs):  # pylint: disable=unused-argument
         """ Test the get method """
@@ -54,9 +55,8 @@ class TestSqlaRunner:
         SqlaRunner.schema = mock_schema
         test_input = "test_input"
         resp = SqlaRunner.get(test_input)
-        mock_schema.dump.assert_called_with(mock_rt_wrapper.return_value)
-        mock_rt_wrapper.assert_called_with(get_callback, mock_model, test_input)
-        assert resp == mock_schema.dump.return_value
+        mock_rt_wrapper.assert_called_with(get_callback, mock_model, mock_schema, test_input)
+        assert resp == mock_rt_wrapper.return_value
 
     def test_delete_callback_found(self, mock_session, mock_model):
         """ Test the delete callback """
@@ -112,12 +112,12 @@ class TestSqlaRunner:
         ],
     )
     def test_get_all_callback(
-        self, attrs, attr_vals, filters, mock_session, mock_model, mock_select, log
+        self, attrs, attr_vals, filters, mock_session, mock_model, mock_schema, mock_select, log
     ):
         """ Test the get_all callback """
         for i, attr in enumerate(attrs):
             setattr(mock_model, attr, attr_vals[i])
-        resp = get_all_callback(mock_session, mock_model, **filters)
+        resp = get_all_callback(mock_session, mock_model, mock_schema, **filters)
         mock_select.assert_called_with(mock_model)
         mock_stmt = mock_select.return_value
         if not filters:
@@ -129,7 +129,8 @@ class TestSqlaRunner:
             mock_stmt = mock_stmt.where.return_value
         mock_session.scalars.assert_called_with(mock_stmt)
         mock_session.scalars.return_value.all.assert_called_with()
-        assert resp == mock_session.scalars.return_value.all.return_value
+        mock_schema.dump.assert_called_with(mock_session.scalars.return_value.all.return_value)
+        assert resp == mock_schema.dump.return_value
 
     @pytest.mark.parametrize(
         "filters", 
@@ -140,6 +141,5 @@ class TestSqlaRunner:
         SqlaRunner.model = mock_model
         SqlaRunner.schema_list = mock_schema
         resp = SqlaRunner.get_all(**filters)
-        mock_rt_wrapper.assert_called_with(get_all_callback, mock_model, **filters)
-        mock_schema.dump.assert_called_with(mock_rt_wrapper.return_value)
-        assert resp == mock_schema.dump.return_value
+        mock_rt_wrapper.assert_called_with(get_all_callback, mock_model, mock_schema, **filters)
+        assert resp == mock_rt_wrapper.return_value

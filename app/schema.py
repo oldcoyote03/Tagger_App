@@ -1,7 +1,10 @@
 """ Schema for Bookmarks """
 
 import logging
-from sqlalchemy.orm import DeclarativeBase
+from uuid import UUID, uuid4
+from datetime import date
+from typing_extensions import Annotated
+from sqlalchemy.orm import MappedAsDataclass, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.schema import CreateTable
 from sqlalchemy.sql import func
@@ -12,7 +15,7 @@ from sqlalchemy_utils.types.uuid import UUIDType
 
 log = logging.getLogger(__name__)
 
-class Base(DeclarativeBase):
+class Base(MappedAsDataclass, DeclarativeBase):
     """ Model class for Flask-SQLAlchemy """
 
 db = SQLAlchemy(model_class=Base)
@@ -49,18 +52,20 @@ def manage_db(app, args):
             db.create_all()
         view_database_details()
 
-class BaseModel(db.Model):
-    """ Base model """
-    __abstract__ = True
-    id = db.Column(UUIDType(), primary_key=True)
-    created_at = db.Column(
-        db.Date,
-        server_default=func.current_date(type=db.Date,inherit_cache=False)
-    )
+UniqueText = Annotated[str, mapped_column(db.Text, index=True, unique=True, nullable=False)]
+BoolNullable = Annotated[bool, mapped_column(db.Boolean, nullable=True)]
+IntNullable = Annotated[int, mapped_column(db.Integer, nullable=True)]
+UuidPk = Annotated[UUID, mapped_column(UUIDType(binary=False), primary_key=True, default=uuid4)]
+CurrentDate = Annotated[
+    date,
+    mapped_column(db.Date, server_default=func.current_date(type=db.Date, inherit_cache=False))
+]
 
-class Bookmarks(BaseModel):
+class Bookmarks(db.Model):
     """ Bookmarks model """
-    url = db.Column(db.String, index=True, unique=True, nullable=False)
+    url: Mapped[UniqueText]
+    id: Mapped[UuidPk] = mapped_column(init=False)
+    created_at: Mapped[CurrentDate] = mapped_column(init=False)
 
     def __repr__(self):
         return f'<Bookmarks {self.id}>'

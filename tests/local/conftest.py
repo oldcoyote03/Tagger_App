@@ -42,21 +42,22 @@ def mocked_session_wrapper(
     session_begin = Session.begin
     def session_begin_wrapper(nested=None):
         log.info(f"Session.begin(nested={nested})")
+        if nested:
+            return session_begin(mocked_session, nested)
+        mocked_session.close()
         trans = session_begin(mocked_session, nested)
-        if not nested:
-            log.info(f"ModelMocker.create_all : {sqlalchemy_mock_config}")
-            try:
-                ModelMocker(
-                    mocked_session, sqlalchemy_declarative_base, sqlalchemy_mock_config
-                ).create_all()
-                log.info("Loaded mock data")
-            except IntegrityError as ie:
-                log.info(f"Mock data already loaded: {ie.orig}")
+        log.info(f"ModelMocker.create_all : {sqlalchemy_mock_config}")
+        try:
+            ModelMocker(
+                mocked_session, sqlalchemy_declarative_base, sqlalchemy_mock_config
+            ).create_all()
+            log.info("Loaded mock data")
+        except IntegrityError as ie:
+            log.info(f"Mock data already loaded: {ie.orig}")
         return trans
     mock_session_begin = mocker.patch("sqlalchemy.orm.session.Session.begin")
     mock_session_begin.side_effect = session_begin_wrapper
-    mocked_session.close()
-    # run_transaction expects the session instance to have this attribute
+    # run_transaction expects the session instance to have right attribute at left location
     mocked_session.bind.driver = mocked_session.bind.engine.driver
     return mock_session_begin
 

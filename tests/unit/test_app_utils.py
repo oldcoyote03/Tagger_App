@@ -2,10 +2,22 @@
 pytest /app/tests/unit/test_app_utils.py
 """
 
-import sys
 import pytest
-from app.utils import strtobool, flatten_dict, parse_args
+from app.utils import parse_args, strtobool, flatten_dict
 
+
+def test_parse_args(mock_argparse):
+    """ Test manage_db.py CLI args parser """
+    result = parse_args()
+    assert result == mock_argparse.return_value.parse_args.return_value
+
+def test_parse_args_exit(mock_argparse):
+    """ Test manage_db.py CLI args parser error """
+    mock_argparse.return_value.parse_args.return_value.view = True
+    mock_argparse.return_value.parse_args.return_value.reset = True
+    with pytest.raises(SystemExit):
+        parse_args()
+    mock_argparse.return_value.print_usage.assert_called_once()
 
 @pytest.mark.parametrize(
     "test_input,expected",
@@ -77,23 +89,3 @@ def test_flatten_dict_separator(log):
     log.info(f"Flattened Dictionary : {flattened_dict}")
     log.info(f"Expected             : {expected}")
     assert flattened_dict == expected
-
-@pytest.mark.parametrize(
-    "test_sys_argv", [["test_script", "--arg"], ["test_script", "--env=test", "--arg"]]
-)
-def test_parse_args_wo_env(test_sys_argv, mock_argparse):
-    """ Test CLI args parser """
-    sys.argv = test_sys_argv
-    result = parse_args()
-    assert result == mock_argparse.return_value.parse_args.return_value
-
-@pytest.mark.parametrize(
-    "test_sys_argv", 
-    [["test_script", "--arg1", "--arg2"], ["test_script", "--env=test", "--arg1", "--arg2"]]
-)
-def test_parse_args_exit(test_sys_argv, mock_argparse):
-    """ Test CLI args parser """
-    sys.argv = test_sys_argv
-    with pytest.raises(SystemExit):
-        parse_args()
-    mock_argparse.return_value.print_usage.assert_called_once()

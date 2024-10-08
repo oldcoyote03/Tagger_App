@@ -1,4 +1,7 @@
 {
+    "LOGGING": {
+        "FILE": "/var/log/app.log"
+    },
     "DATABASE": {
         "URL": "sqlite:///mydatabase.db"
     }

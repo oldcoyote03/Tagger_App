@@ -1,4 +1,7 @@
 {
+    "LOGGING": {
+        "FILE": "/var/log/app.log"
+    },
     "DATABASE": {
         "URL": "cockroachdb://root@roach:26257/tagger_db?sslmode=disable"
     }

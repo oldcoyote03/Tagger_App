@@ -51,6 +51,10 @@ def use_args_query(view_method):
     """ use_args wrapper for query args """
     return use_args_wrapper(view_method, "query")
 
+def abort_not_found(service, item_id):
+    """ Flask abort """
+    flask_abort(Response(f"{service.get_name()} {item_id} not found", 404))
+
 
 class ItemAPI(MethodView):
     """ Item API """
@@ -63,7 +67,7 @@ class ItemAPI(MethodView):
         log.info(f"GET /{self.service.get_name()}/{item_id}")
         sqla_resp = self.service.get(item_id)
         if not sqla_resp:
-            flask_abort(Response(f"{self.service.get_name()} {item_id} not found", 404))
+            abort_not_found(self.service, item_id)
         return sqla_resp
 
     def delete(self, item_id):
@@ -71,8 +75,9 @@ class ItemAPI(MethodView):
         log.info(f"DELETE /{self.service.get_name()}/{item_id}")
         try:
             self.service.delete(item_id)
-        except SqlaNotFound:
-            flask_abort(Response(f"{self.service.get_name()} {item_id} not found", 404))
+        except SqlaNotFound as nf:
+            log.warning(nf)
+            abort_not_found(self.service, item_id)
         return Response("", 204)
 
 

@@ -8,7 +8,7 @@ import pytest
 from flask import url_for
 from app.api import (
     SqlaNotFound, register_api, register_healthcheck, use_args_wrapper,
-    use_args_json, use_args_query, handle_request_parsing_error
+    use_args_json, use_args_query, handle_request_parsing_error, abort_not_found
 )
 
 class TestHealthcheckEndpoint:
@@ -50,7 +50,6 @@ class TestServiceItemView:
         mock_service.delete.assert_called_with(test_item_id)
         assert response.status_code == 204
         assert get_data(response) == ""
-
 
     def test_delete_item_not_found(self, mock_service, get_data):
         """ Test the delete item endpoint - not found """
@@ -160,3 +159,13 @@ def test_handle_request_parsing_error(mock_parsing_error, mock_webargs_abort):
     """ Test the handle_request_parsing_error function """
     handle_request_parsing_error(mock_parsing_error)
     mock_webargs_abort.assert_called_once_with(422, errors=mock_parsing_error.messages.get("json"))
+
+def test_abort_not_found(mock_service, mock_flask_abort, mock_response):
+    """ Test the abort helper method"""
+    test_item_id = "test_item_id"
+    abort_not_found(mock_service, test_item_id)
+    mock_service.get_name.assert_called_once_with()
+    mock_response.assert_called_once_with(
+        f"{mock_service.get_name.return_value} {test_item_id} not found", 404
+    )
+    mock_flask_abort.assert_called_once_with(mock_response.return_value)

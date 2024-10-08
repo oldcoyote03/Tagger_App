@@ -43,7 +43,7 @@ class TestExampleApi:
         response = self.client.delete(url_for("example-item", item_id=test_item_id))  # pylint: disable=no-member
         log.info(f"response: {get_data(response)}")
         assert response.status_code == 404
-        expected_data = f"SQL Not Found: model=Example; record ID: {test_item_id}"
+        expected_data = f"example {test_item_id} not found"
         assert get_data(response) == expected_data
 
     def test_add_item(self, get_data, log):

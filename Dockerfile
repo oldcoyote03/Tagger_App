@@ -6,7 +6,6 @@ RUN python -m pip install --upgrade pip
 RUN mkdir /app
 WORKDIR /app
 COPY . .
-# ENV LOG_FILE=/var/log/app.log
 
 RUN pip install -r requirements.txt
 CMD [ "sleep", "infinity" ]

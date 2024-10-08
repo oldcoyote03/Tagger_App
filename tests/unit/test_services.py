@@ -21,18 +21,18 @@ class TestSqlaRunner:
         mock_db_services, log,
     ):
         """ Test the run_transaction method """
-        sessionmaker_resp = "test_session"
-        mock_sessionmaker_services.return_value = sessionmaker_resp
         rt_side_effect = lambda session, lambda_callback, max_retries: lambda_callback(session)  # pylint: disable=unnecessary-lambda-assignment
         mock_run_transaction_services.side_effect = rt_side_effect
         test_resp = "test_response"
         original_callback = lambda s, *args, **kwargs: test_resp  # pylint: disable=unnecessary-lambda-assignment
         mock_callback = mock.MagicMock(side_effect=original_callback)
         resp = rt_wrapper(mock_callback, *args, **kwargs)
-        mock_run_transaction_services.assert_called_with(sessionmaker_resp, mock.ANY, max_retries=0)
+        mock_run_transaction_services.assert_called_with(
+            mock_sessionmaker_services.return_value, mock.ANY, max_retries=0
+        )
         mock_sessionmaker_services.assert_called_with(mock_db_services.engine)
         log.info(f"mock_callback.call_args: {mock_callback.call_args}")
-        mock_callback.assert_called_with(sessionmaker_resp, *args, **kwargs)
+        mock_callback.assert_called_with(mock_sessionmaker_services.return_value, *args, **kwargs)
         assert resp == test_resp
 
     def test_get_name(self, mock_model, mock_sqla_attrs):  # pylint: disable=unused-argument

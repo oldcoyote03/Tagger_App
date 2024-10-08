@@ -20,7 +20,7 @@ class Base(MappedAsDataclass, DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 ma = Marshmallow()
-func: callable  # E1102
+func: callable
 
 def view_database_details():
     """ View database details """
@@ -52,9 +52,12 @@ def manage_db(app, args):
             db.create_all()
         view_database_details()
 
+
 UniqueText = Annotated[str, mapped_column(db.Text, index=True, unique=True, nullable=False)]
 BoolNullable = Annotated[bool, mapped_column(db.Boolean, nullable=True)]
 IntNullable = Annotated[int, mapped_column(db.Integer, nullable=True)]
+
+# Base attributes and auto-populated at create time
 UuidPk = Annotated[UUID, mapped_column(UUIDType(binary=False), primary_key=True, default=uuid4)]
 CurrentDate = Annotated[
     date,

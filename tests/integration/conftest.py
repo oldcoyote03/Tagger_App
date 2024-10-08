@@ -1,11 +1,18 @@
 """
-pytest /app/tests/integration/test_bookmarks_api.py --env=local
+pytest /app/tests/integration/test_bookmarks_api.py
 
 """
 
 import pytest
 from flask import url_for
+from app import create_app
 
+
+@pytest.fixture
+def app(request):
+    """ For the Pytest-Flask API client fixture """
+    env = "local" if request.config.option.env == "development" else request.config.option.env
+    return create_app(env)
 
 def clear_records_with_filters(view, filters, client, get_data, log):
     """ Clear the record """
@@ -25,8 +32,8 @@ def clear_records_with_filters(view, filters, client, get_data, log):
         if not response.status_code == 204:
             log.info(f"Error deleting record {record}")
 
-@pytest.fixture
-def bookmarks_urls():
+@pytest.fixture(name="bookmarks_urls")
+def bookmarks_urls_fixture():
     """ Test bookmarks urls """
     return [
         {"url": "https://www.stackoverflow.com"},
@@ -34,7 +41,7 @@ def bookmarks_urls():
     ]
 
 @pytest.fixture
-def setup_test_bookmarks(client, get_data, bookmarks_urls, log):  # pylint: disable=redefined-outer-name
+def setup_test_bookmarks(client, get_data, bookmarks_urls, log):
     """ Setup data for bookmarks tests """
     view = "bookmarks"
     for url in bookmarks_urls:

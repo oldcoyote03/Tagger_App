@@ -7,6 +7,6 @@ from app.utils import parse_args
 
 if __name__ == '__main__':
     args = parse_args()
-    app = create_app()
+    app = create_app(args.env)
     manage_db(app, args)
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=args.debug, host=args.host)

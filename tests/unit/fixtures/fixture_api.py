@@ -5,8 +5,8 @@ from webargs import fields
 from app.api import register_api
 
 
-@pytest.fixture
-def mock_service(mocker):
+@pytest.fixture(name="mock_service")
+def mock_service_fixture(mocker):
     """ Mock Bookmarks """
     mock_service_class = mocker.MagicMock()
     mock_service_attrs = {
@@ -23,7 +23,7 @@ def mock_service(mocker):
     return mock_service_class
 
 @pytest.fixture
-def client_unit_class(request, app, mock_service):  # pylint: disable=redefined-outer-name
+def client_unit_class(request, app, mock_service):
     """ Unit test client """
     if request.cls is not None:
         register_api(app, mock_service)
@@ -78,3 +78,13 @@ def mock_parsing_error(mocker):
 def mock_webargs_abort(mocker):
     """ Mock webargs abort """
     return mocker.patch("app.api.webargs_abort", return_value="abort")
+
+@pytest.fixture
+def mock_flask_abort(mocker):
+    """ Mock flask abort """
+    return mocker.patch("app.api.flask_abort")
+
+@pytest.fixture
+def mock_response(mocker):
+    """ Mock response """
+    return mocker.patch("app.api.Response", return_value="mock_response")

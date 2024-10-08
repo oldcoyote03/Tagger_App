@@ -7,7 +7,7 @@ from app.services import SqlaRunner
 @pytest.fixture
 def mock_sessionmaker_services(mocker):
     """ Mock Bookmarks """
-    return mocker.patch("app.services.sessionmaker")
+    return mocker.patch("app.services.sessionmaker", return_value="test_session")
 
 @pytest.fixture
 def mock_sqla_attrs():
@@ -102,13 +102,3 @@ def mock_get_callback(mocker):
     mock_get_callback_func = mocker.patch("app.services.get_callback")
     mock_get_callback_func.return_value = "mock_get_callback"
     return mock_get_callback_func
-
-@pytest.fixture
-def mock_get_sqlalchemy(mocker):
-    """ DEPRECATED: Mock get_or_404 """
-    return mocker.patch("flask_sqlalchemy._QueryProperty.__get__").return_value
-
-@pytest.fixture
-def mock_session_commit_sqlalchemy(mocker):
-    """ DEPRECATED: Mock session.commit """
-    return mocker.patch("sqlalchemy.orm.Session.commit")

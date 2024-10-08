@@ -22,19 +22,13 @@ docker exec -it tagger-cont /bin/bash
 
 import os
 import json
-import uuid
 import datetime
 import logging
 import logging.config
-
 import pytest
-from werkzeug.exceptions import NotFound
 from sqlalchemy.exc import IntegrityError
-
-# from app.api import TestResource, BookmarkResource, BookmarksResource
 from app.config import get_logging_config
 from app import create_app
-from app.schema import Bookmarks
 
 
 pytest_plugins = [
@@ -114,43 +108,3 @@ def get_data():
 def integrity_error_exc():
     """ Integrity error exception """
     return IntegrityError('Mock', ['mock'], IntegrityError)
-
-
-
-############################################################################
-
-@pytest.fixture
-def bookmark_obj():
-    """ Bookmark object """
-    bookmark = Bookmarks(
-        id=uuid.uuid4(),
-        url="https://www.test.com",
-        created_at=datetime.date(2000, 1, 1)
-    )
-    return bookmark
-
-@pytest.fixture
-def not_found_exc():
-    """ Not found exception """
-    return NotFound
-
-@pytest.fixture
-def bookmarks_obj():
-    """ Bookmarks object """
-    bookmarks = []
-    for name in ['foo', 'bar']:
-        bookmarks.append(Bookmarks(
-            id=uuid.uuid4(),
-            url=f"https://www.{name}.com",
-            created_at=datetime.date(2000, 1, 1)
-        ))
-    return bookmarks
-
-@pytest.fixture
-def bookmarks_filter_obj():
-    """ Bookmarks object """
-    bookmark = Bookmarks(
-        id=uuid.uuid4(),
-        url="https://www.foo.com"
-    )
-    return [bookmark]

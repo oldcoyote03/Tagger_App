@@ -10,8 +10,6 @@ pipeline {
     stages {
         stage('Configure System') {
             steps {
-                sh 'apt-get -y update'
-                sh 'apt-get -y upgrade'
                 sh 'python -m pip install --upgrade pip'
             }
         }

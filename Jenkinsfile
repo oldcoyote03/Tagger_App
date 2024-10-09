@@ -13,15 +13,10 @@ pipeline {
                 echo 'Hello world!'
             }
         }
-        // stage('Python') {
-        //     steps {
-        //         sh 'python3 --version'
-        //     }
-        // }
-        // stage('Docker') {
-        //     steps {
-        //         sh 'docker --version'
-        //     }
-        // }
+        stage('Python') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
     }
 }

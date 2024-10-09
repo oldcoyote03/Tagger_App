@@ -8,14 +8,26 @@ pipeline {
     }
     // agent { dickerfile true }
     stages {
-        stage('Hello') {
+        stage('Configure System') {
             steps {
-                echo 'Hello world!'
+                sh 'apt-get -y update'
+                sh 'apt-get -y upgrade'
+                sh 'python -m pip install --upgrade pip'
             }
         }
-        stage('Python') {
+        stage('Checkout') {
             steps {
-                sh 'python3 --version'
+                checkout scm
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'pytest /app/tests/unit --cov=app --cov-report=term-missing'
             }
         }
     }

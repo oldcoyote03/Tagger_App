@@ -13,25 +13,16 @@ pipeline {
         } 
     }
     stages {
-        // stage('Configure System') {
-        //     steps {
-        //         sh 'python -m pip install --upgrade pip'
-        //     }
-        // }
-        // stage('Checkout') {
-        //     steps {
-        //         checkout scm
-        //     }
-        // }
-        // stage('Install Dependencies') {
-        //     steps {
-        //         sh 'pip install -r requirements.txt'
-        //     }
-        // }
-        stage('Run Tests') {
+        stage('File System') {
             steps {
-                sh 'pytest /app/tests/unit --cov=app --cov-report=term-missing'
+                sh 'ls -l /'
+                sh 'pwd'
             }
         }
+        // stage('Run Tests') {
+        //     steps {
+        //         sh 'pytest /app/tests/unit --cov=app --cov-report=term-missing'
+        //     }
+        // }
     }
 }

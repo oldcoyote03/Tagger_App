@@ -16,7 +16,7 @@ docker run -d -p 5000:5000 --name tagger-cont \
     -v $(pwd):/app \
     -e APP_ENV='local' \
     tagger-img
-docker exec -it tagger-cont /bin/bash
+docker exec -it tagger-cont bash
 
 """
 

@@ -17,12 +17,14 @@ pipeline {
             steps {
                 sh 'ls -l /'
                 sh 'pwd'
+                sh 'ls -l'
             }
         }
-        // stage('Run Tests') {
-        //     steps {
-        //         sh 'pytest /app/tests/unit --cov=app --cov-report=term-missing'
-        //     }
-        // }
+        stage('Run Tests') {
+            steps {
+                sh 'pytest tests/unit --cov=app --cov-report=term-missing'
+                // sh 'pytest /app/tests/unit --cov=app --cov-report=term-missing'
+            }
+        }
     }
 }

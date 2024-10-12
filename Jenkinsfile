@@ -1,11 +1,4 @@
 pipeline {
-    // agent any
-    // agent { 
-    //     docker { 
-    //         image 'python:3.12-slim-bookworm'
-    //         args '-v /var/run/docker.sock:/var/run/docker.sock'
-    //     } 
-    // }
     agent { 
         dockerfile {
             filename 'Dockerfile'
@@ -13,17 +6,58 @@ pipeline {
         } 
     }
     stages {
-        stage('File System') {
+        
+        // Unit tests run for all pipelines
+        stage('Unit Tests') {
             steps {
-                sh 'ls -l /'
-                sh 'pwd'
-                sh 'ls -l'
+                echo 'Running unit tests'
+                sh 'pytest tests/unit --cov=app --cov-report=term-missing'
+            }
+            post {
+                success {
+                    echo 'Unit tests passed'
+                }
+                failure {
+                    echo 'Unit tests failed'
+                }
             }
         }
-        stage('Run Tests') {
+
+        // Local tests run for merges to 'develop'
+        stage('Develop Branch Pipeline') {
+            when {
+                branch 'develop'
+            }
             steps {
-                sh 'pytest tests/unit --cov=app --cov-report=term-missing'
-                // sh 'pytest /app/tests/unit --cov=app --cov-report=term-missing'
+                echo 'Running pipeline for the develop branch...'
+                sh 'pytest tests/local'
+            }
+            post {
+                success {
+                    echo 'Code successfully merged to develop branch and tested'
+                }
+                failure {
+                    echo 'Develop branch pipeline failed'
+                }
+            }
+        }
+
+        // Integration tests run for merges to 'main'
+        stage('Main Branch Pipeline') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo 'Running integration tests'
+                sh 'pytest tests/integration'
+            }
+            post {
+                success {
+                    echo 'Code successfully merged to main branch and tested'
+                }
+                failure {
+                    echo 'Main branch pipeline failed'
+                }
             }
         }
     }

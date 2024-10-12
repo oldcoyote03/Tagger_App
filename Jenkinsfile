@@ -27,9 +27,10 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 echo 'Running code analysis'
-                sh '''pylint --disable=W1203 
-                     |--output-format=parseable --reports=no app > pylint.log 
-                     ||| echo "pylint exited with $?"'''.stripMargin()
+                sh '''
+                      pylint --disable=W1203 
+                      --output-format=parseable --reports=no app > pylint.log 
+                      | echo "pylint exited with $?"'''.stripMargin()
                 sh 'cat render/pylint.log'
             }
             post {

@@ -29,10 +29,9 @@ def strtobool(val):
     val = val.lower()
     if val in ("y", "yes", "t", "true", "on", "1",):
         return True
-    elif val in ("n", "no", "f", "false", "off", "0",):
+    if val in ("n", "no", "f", "false", "off", "0",):
         return False
-    else:
-        raise ValueError(f"Invalid truth value {val}")
+    raise ValueError(f"Invalid truth value {val}")
 
 def flatten_dict(parent_value, parent_key="", separator="_"):
     """ Flatten nested dictionary """

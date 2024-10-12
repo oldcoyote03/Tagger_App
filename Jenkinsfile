@@ -7,7 +7,7 @@ pipeline {
     }
     stages {
         
-        // Unit tests run for all pipelines
+        // Unit tests for all pipelines
         stage('Unit Tests') {
             steps {
                 echo 'Running unit tests'
@@ -19,6 +19,27 @@ pipeline {
                 }
                 failure {
                     echo 'Unit tests failed'
+                }
+            }
+        }
+
+        // Code analysis for all pipelines
+        stage('Code Analysis') {
+            steps {
+                echo 'Running code analysis'
+                sh '''
+                      pylint --disable=W1203 
+                      --output-format=parseable --reports=no app > pylint.log 
+                      | echo "pylint exited with $?"
+                '''.stripMargin()
+                sh 'cat render/pylint.log'
+            }
+            post {
+                success {
+                    echo 'Code analysis passed'
+                }
+                failure {
+                    echo 'Code analysis failed'
                 }
             }
         }

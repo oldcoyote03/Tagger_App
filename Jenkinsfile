@@ -7,7 +7,7 @@ pipeline {
     }
     stages {
         
-        // Unit tests run for all pipelines
+        // Unit tests for all pipelines
         stage('Unit Tests') {
             steps {
                 echo 'Running unit tests'
@@ -23,7 +23,7 @@ pipeline {
             }
         }
 
-        // Code analysis run for all pipelines
+        // Code analysis for all pipelines
         stage('Code Analysis') {
             steps {
                 echo 'Running code analysis'

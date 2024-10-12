@@ -23,6 +23,25 @@ pipeline {
             }
         }
 
+        // Code analysis run for all pipelines
+        stage('Code Analysis') {
+            steps {
+                echo 'Running code analysis'
+                sh """pylint --disable=W1203 
+                     |--output-format=parseable --reports=no module > pylint.log 
+                     ||| echo 'pylint exited with $?')""".stripMargin()
+                sh 'cat render/pylint.log'
+            }
+            post {
+                success {
+                    echo 'Code analysis passed'
+                }
+                failure {
+                    echo 'Code analysis failed'
+                }
+            }
+        }
+
         // Local tests run for merges to 'develop'
         stage('Develop Branch Pipeline') {
             when {

@@ -30,7 +30,8 @@ pipeline {
                 sh '''
                       pylint --disable=W1203 
                       --output-format=parseable --reports=no app > pylint.log 
-                      | echo "pylint exited with $?"'''.stripMargin()
+                      | echo "pylint exited with $?"
+                '''.stripMargin()
                 sh 'cat render/pylint.log'
             }
             post {

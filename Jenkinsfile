@@ -30,7 +30,7 @@ pipeline {
                 sh 'pylint --disable=W1203 \
                     --output-format=parseable --reports=no app > pylint.log \
                     | echo "pylint exited with $?"'
-                sh 'cat render/pylint.log'
+                sh 'cat pylint.log'
             }
             post {
                 success {

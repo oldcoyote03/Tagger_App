@@ -38,7 +38,7 @@ pipeline {
                    export PYLINTHOME=$WORKSPACE/.pylint
                    pylint --disable=W1203 \
                           --output-format=parseable --reports=no app > pylint.log \
-                          | echo "pylint exited with $?"'
+                          | echo "pylint exited with $?"
                    cat pylint.log
                 '''
             }

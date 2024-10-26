@@ -27,20 +27,15 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 echo 'Running code analysis'
-                // sh 'mkdir -p $WORKSPACE/.pylint'
-                // sh 'export PYLINTHOME=$WORKSPACE/.pylint'
-                // sh 'pylint --disable=W1203 \
-                //     --output-format=parseable --reports=no app > pylint.log \
-                //     | echo "pylint exited with $?"'
-                // sh 'cat pylint.log'
-                sh '''
-                   mkdir -p $WORKSPACE/.pylint
-                   export PYLINTHOME=$WORKSPACE/.pylint
-                   pylint --disable=W1203 \
-                          --output-format=parseable --reports=no app > pylint.log \
-                          | echo "pylint exited with $?"
-                   cat pylint.log
-                '''
+                sh 'sleep 600'
+                // sh '''
+                //    mkdir -p $WORKSPACE/.pylint
+                //    export PYLINTHOME=$WORKSPACE/.pylint
+                //    pylint --disable=W1203 \
+                //           --output-format=parseable --reports=no app > pylint.log \
+                //           | echo "pylint exited with $?"
+                //    cat pylint.log
+                // '''
             }
             post {
                 success {

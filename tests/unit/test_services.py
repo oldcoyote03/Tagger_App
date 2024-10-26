@@ -106,7 +106,7 @@ class TestSqlaRunner:
                 {"attr1": "attr1_val", "attr2": "attr2_val"},
             ),
             (
-                ("attr1", "attr2", "attr3"), ("attr1_val", "attr2_val", "attr3_val"), 
+                ("attr1", "attr2", "attr3"), ("attr1_val", "attr2_val", "attr3_val"),
                 {"attr1": "attr1_val", "attr2": "mismatch", "attr3": "attr3_val"},
             ),
         ],

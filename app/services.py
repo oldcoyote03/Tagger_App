@@ -8,6 +8,7 @@ from sqlalchemy_cockroachdb import run_transaction
 from webargs import fields
 from app.schema import db, Bookmarks, BookmarksSchema
 
+# pylint: disable=no-member
 
 log = logging.getLogger(__name__)
 
@@ -28,9 +29,11 @@ def rt_wrapper(callback, *args, **kwargs):
         max_retries=os.environ.get("DATABASE_MAX_RETRIES", 0),
     )
 
+
 def get_callback(session, model, schema, record_id):
     """ Get a model record by id """
     return schema.dump(session.get(model, record_id))
+
 
 def delete_callback(session, model, record_id):
     """ Delete a model record """
@@ -39,9 +42,11 @@ def delete_callback(session, model, record_id):
         raise SqlaNotFound(model, record_id)
     session.delete(record)
 
+
 def add_callback(session, record):
     """ Add a record """
     session.add(record)
+
 
 def get_all_callback(session, model, schema, **filters):
     """ Get all model records """
@@ -57,17 +62,17 @@ class SqlaRunner:
     @classmethod
     def get_name(cls):
         """ Model name """
-        return cls.model.__name__.lower()  # pylint: disable=no-member
+        return cls.model.__name__.lower()
 
     @classmethod
     def get(cls, record_id):
         """ Get a model record by id """
-        return rt_wrapper(get_callback, cls.model, cls.schema, record_id)  # pylint: disable=no-member
+        return rt_wrapper(get_callback, cls.model, cls.schema, record_id)
 
     @classmethod
     def delete(cls, record_id):
         """ Delete a model record by id """
-        rt_wrapper(delete_callback, cls.model, record_id)  # pylint: disable=no-member
+        rt_wrapper(delete_callback, cls.model, record_id)
 
     @classmethod
     def add(cls, record):
@@ -77,7 +82,7 @@ class SqlaRunner:
     @classmethod
     def get_all(cls, **filters):
         """ Get a model record by id """
-        return rt_wrapper(get_all_callback, cls.model, cls.schema_list, **filters)  # pylint: disable=no-member
+        return rt_wrapper(get_all_callback, cls.model, cls.schema_list, **filters)
 
 
 class BookmarksService(SqlaRunner):

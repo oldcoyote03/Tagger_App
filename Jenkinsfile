@@ -52,7 +52,7 @@ pipeline {
                 branch 'develop'
             }
             steps {
-                echo 'Running pipeline for the develop branch...'
+                echo 'Running pipeline for the develop branch'
                 sh 'pytest tests/local'
             }
             post {

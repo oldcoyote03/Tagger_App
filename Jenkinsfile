@@ -26,7 +26,7 @@ pipeline {
         // Code analysis for all pipelines
         stage('Code Analysis') {
             steps {
-                echo 'Running code analysis'
+                echo 'Running code analysis...'
                 sh '''
                    mkdir -p $WORKSPACE/.pylint
                    export PYLINTHOME=$WORKSPACE/.pylint

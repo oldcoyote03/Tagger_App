@@ -1,10 +1,10 @@
 """
 ### Generic API
-* The API classes have an instance attribute ``service``
-* The API classes require the ``service`` to have the following attributes
+* API classes have an instance attribute ``service``
+* API classes require the ``service`` to have the following attributes
   * ``model``: SQLAlchemy model
-  * ``schema``: Marshmallow schema
-  * ``schema_list``: Marshmallow schema for many records
+  * ``schema``: Marshmallow schema for a single record
+  * ``schema_list``: Marshmallow schema for a list records
   * ``query_args``: Webargs URI query arguments
   * ``json_args``: Webargs JSON payload arguments
 

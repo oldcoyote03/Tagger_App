@@ -13,12 +13,14 @@ Options for created_at field:
 Note: Since the CREATE TABLE operation occurs before the app is run, you cannot use the server_default=sqlalchemy.sql.func.current_date since this injects the CURRENT_DATE() function into the CREATE TABLE operation (which is done already).
 
 ## TODO:
-* Build pipeline
+* Deploy to local docker environment
 * User model
 * User auth
 * Flask SQLAlchemy Marshmallow CockroachDB
 * Tags model
 * Boilerplate
+* Multi-branch build pipeline - Jenkins in the cloud
+* Deploy to k8s environment hosted in the cloud
 
 ## DONE: 
 * Development workflow
@@ -33,7 +35,7 @@ Note: Since the CREATE TABLE operation occurs before the app is run, you cannot 
 * Local tests
 * ModelView
 * Dataclass / Mapped Column
-
+* Multi-branch build pipeline
 
 ## VS Code Extensions:
 * Python
@@ -59,5 +61,22 @@ Does not work with sqlite when URI has ID
 ```
 from sqlalchemy_utils.types.uuid import UUIDType
 id = db.Column(UUIDType(), primary_key=True)
-``` 
- 
+```
+
+## NOTE ABOUT REQUIRED PACKAGES
+```
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy-Utils==0.41.2  # for UUID
+psycopg2-binary==2.9.9
+sqlalchemy-cockroachdb==2.0.2
+flask-marshmallow==1.2.1
+marshmallow_sqlalchemy==1.0.0
+webargs==8.2.0
+dynaconf==3.2.6  # for config
+pytest-flask==1.3.0
+pytest-mock==3.14.0
+pytest-sqlalchemy-mock==0.1.7  # for mock db
+pytest-cov==5.0.0  # for coverage
+pylint==3.3.1  # for linting
+```

@@ -7,7 +7,6 @@ pipeline {
     }
     stages {
         
-        // Unit tests run for all pipelines
         stage('Unit Tests') {
             steps {
                 echo 'Running unit tests'
@@ -23,13 +22,35 @@ pipeline {
             }
         }
 
+        stage('Code Analysis') {
+            steps {
+                echo 'Running code analysis'
+                sh '''
+                   mkdir -p $WORKSPACE/.pylint
+                   export PYLINTHOME=$WORKSPACE/.pylint
+                   pylint --disable=W1203 \
+                          --output-format=parseable --reports=no app > pylint.log \
+                          | echo "pylint exited with $?"
+                   cat pylint.log
+                '''
+            }
+            post {
+                success {
+                    echo 'Code analysis passed'
+                }
+                failure {
+                    echo 'Code analysis failed'
+                }
+            }
+        }
+
         // Local tests run for merges to 'develop'
         stage('Develop Branch Pipeline') {
             when {
                 branch 'develop'
             }
             steps {
-                echo 'Running pipeline for the develop branch...'
+                echo 'Running pipeline for the develop branch'
                 sh 'pytest tests/local'
             }
             post {

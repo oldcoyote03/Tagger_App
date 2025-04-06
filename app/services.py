@@ -21,8 +21,6 @@ class SqlaNotFound(Exception):
 
 def rt_wrapper(callback, *args, **kwargs):
     """ run_transaction wrapper for SQLAlchemy clients """
-    # log.info(f"conn type                    : {type(conn)}")  # temp
-    # log.info(f"conn.bind.driver             : {conn.bind.driver}")  # temp
     return run_transaction(
         sessionmaker(db.engine),
         lambda s: callback(s, *args, **kwargs),

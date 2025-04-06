@@ -7,7 +7,6 @@ pipeline {
     }
     stages {
         
-        // Unit tests for all pipelines
         stage('Unit Tests') {
             steps {
                 echo 'Running unit tests'
@@ -23,10 +22,9 @@ pipeline {
             }
         }
 
-        // Code analysis for all pipelines
         stage('Code Analysis') {
             steps {
-                echo 'Running code analysis...'
+                echo 'Running code analysis'
                 sh '''
                    mkdir -p $WORKSPACE/.pylint
                    export PYLINTHOME=$WORKSPACE/.pylint

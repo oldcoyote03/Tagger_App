@@ -9,7 +9,7 @@ def mock_sessionmaker_services(mocker):
     """ Mock Bookmarks """
     return mocker.patch("app.services.sessionmaker", return_value="test_session")
 
-@pytest.fixture
+@pytest.fixture(name="_mock_sqla_attrs")
 def mock_sqla_attrs():
     """ Mock Bookmarks """
     yield SqlaRunner

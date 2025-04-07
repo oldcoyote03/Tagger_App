@@ -22,7 +22,7 @@ def clear_records_with_filters(view, filters, client, get_data, log):
         log.info(f"Error getting {view} with filters: {filters}")
         log.info(f"Response status_code={response.status_code}")
         log.info(f"Response data={get_data(response)}")
-        return False
+        return
     records = get_data(response)
     if not records:
         log.info(f"No records found with filters {filters}")

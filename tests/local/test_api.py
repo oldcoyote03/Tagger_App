@@ -9,6 +9,8 @@ import pytest
 from flask import url_for
 from tests.local.data import MockData
 
+# pylint: disable=no-member
+
 
 @pytest.mark.usefixtures("client_example_memory")
 class TestExampleApi:
@@ -24,7 +26,7 @@ class TestExampleApi:
             "quantity": test_item_raw.get("quantity"),
             "created_at": str(test_item_raw.get("created_at")),
         }
-        response = self.client.get(url_for("example-item", item_id=test_item.get("id")))  # pylint: disable=no-member
+        response = self.client.get(url_for("example-item", item_id=test_item.get("id")))
         log.info(f"test_item : {test_item}")
         log.info(f"response     : {get_data(response)}")
         assert get_data(response) == test_item
@@ -33,14 +35,14 @@ class TestExampleApi:
         """ Test the delete endpont """
         test_item = MockData.EXAMPLE_DATA[1]
         test_item_id = str(test_item.get("id"))
-        response = self.client.delete(url_for("example-item", item_id=test_item_id))  # pylint: disable=no-member
+        response = self.client.delete(url_for("example-item", item_id=test_item_id))
         assert response.status_code == 204
         assert get_data(response) == ""
 
     def test_delete_item_not_found(self, get_data, log):
         """ Test the delete endpont """
         test_item_id = "9f03ef77-6501-449f-8902-0eca657e9db9"
-        response = self.client.delete(url_for("example-item", item_id=test_item_id))  # pylint: disable=no-member
+        response = self.client.delete(url_for("example-item", item_id=test_item_id))
         log.info(f"response: {get_data(response)}")
         assert response.status_code == 404
         expected_data = f"example {test_item_id} not found"
@@ -53,13 +55,13 @@ class TestExampleApi:
             "flag": True,
             "quantity": 1,
         }
-        response = self.client.post(url_for("example-group"), json=test_item)  # pylint: disable=no-member
+        response = self.client.post(url_for("example-group"), json=test_item)
         assert response.status_code == 200
         log.info(f"response: {get_data(response)}")
         assert UUID(get_data(response))
 
         # Adding the same item raises an IntegrityError
-        response = self.client.post(url_for("example-group"), json=test_item)  # pylint: disable=no-member
+        response = self.client.post(url_for("example-group"), json=test_item)
         assert response.status_code == 400
         expected_exc = "Add example error: UNIQUE constraint failed: example.name"
         assert get_data(response) == expected_exc
@@ -67,7 +69,7 @@ class TestExampleApi:
     def test_get_group_no_filter(self, get_data):
         """ Test the get group endpoint - all items """
         test_group = MockData.EXAMPLE_DATA
-        response = self.client.get(url_for("example-group"))  # pylint: disable=no-member
+        response = self.client.get(url_for("example-group"))
         assert response.status_code == 200
         assert len(get_data(response)) == len(test_group)
 
@@ -80,7 +82,7 @@ class TestExampleApi:
     )
     def test_get_group_filters(self, uri, item_num, get_data):
         """ Test the get group endpoint - with filters """
-        response = self.client.get(f"{url_for('example-group')}?{uri}")  # pylint: disable=no-member
+        response = self.client.get(f"{url_for('example-group')}?{uri}")
         assert response.status_code == 200
         assert len(get_data(response)) == 1
         assert get_data(response)[0].get("name") == f"item{item_num}"

@@ -115,8 +115,5 @@ class HealthcheckView(MethodView):
 
 @parser.error_handler
 def handle_request_parsing_error(err):
-    """ 
-    webargs error handler to returna JSON error response to the client.
-    other args: req, schema, error_status_code, error_headers
-    """
+    """ webargs error handler to return a JSON error response to the client """
     webargs_abort(422, errors=err.messages.get("json"))

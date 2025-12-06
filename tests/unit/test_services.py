@@ -10,6 +10,9 @@ from app.services import (
     get_all_callback,
 )
 
+# pylint: disable=unnecessary-lambda-assignment
+
+
 class TestSqlaRunner:
     """ Test the SqlaRunner class """
 
@@ -21,10 +24,10 @@ class TestSqlaRunner:
         mock_db_services, log,
     ):
         """ Test the run_transaction method """
-        rt_side_effect = lambda session, lambda_callback, max_retries: lambda_callback(session)  # pylint: disable=unnecessary-lambda-assignment
+        rt_side_effect = lambda session, lambda_callback, max_retries: lambda_callback(session)
         mock_run_transaction_services.side_effect = rt_side_effect
         test_resp = "test_response"
-        original_callback = lambda s, *args, **kwargs: test_resp  # pylint: disable=unnecessary-lambda-assignment
+        original_callback = lambda s, *args, **kwargs: test_resp
         mock_callback = mock.MagicMock(side_effect=original_callback)
         resp = rt_wrapper(mock_callback, *args, **kwargs)
         mock_run_transaction_services.assert_called_with(
@@ -35,7 +38,7 @@ class TestSqlaRunner:
         mock_callback.assert_called_with(mock_sessionmaker_services.return_value, *args, **kwargs)
         assert resp == test_resp
 
-    def test_get_name(self, mock_model, mock_sqla_attrs):  # pylint: disable=unused-argument
+    def test_get_name(self, mock_model, _mock_sqla_attrs):
         """ Test SqlaRunner.get_name """
         SqlaRunner.model = mock_model
         resp = SqlaRunner.get_name()
@@ -49,7 +52,7 @@ class TestSqlaRunner:
         mock_schema.dump.assert_called_with(mock_session.get.return_value)
         assert resp == mock_schema.dump.return_value
 
-    def test_get(self, mock_rt_wrapper, mock_model, mock_schema, mock_sqla_attrs):  # pylint: disable=unused-argument
+    def test_get(self, mock_rt_wrapper, mock_model, mock_schema, _mock_sqla_attrs):
         """ Test the get method """
         SqlaRunner.model = mock_model
         SqlaRunner.schema = mock_schema
@@ -76,7 +79,7 @@ class TestSqlaRunner:
         mock_session.get.assert_called_with(mock_model, test_record_id)
         mock_session.delete.assert_not_called()
 
-    def test_delete(self, mock_model, mock_rt_wrapper, mock_sqla_attrs):  # pylint: disable=unused-argument
+    def test_delete(self, mock_model, mock_rt_wrapper, _mock_sqla_attrs):
         """ Test the delete method """
         SqlaRunner.model = mock_model
         test_record_id = "test_record_id"
@@ -136,7 +139,7 @@ class TestSqlaRunner:
         "filters", 
         [{}, {"attr1": "attr1_val"}, {"attr1": "attr1_val", "attr2": "attr2_val"},]
     )
-    def test_get_all(self, mock_model, mock_schema, filters, mock_rt_wrapper, mock_sqla_attrs):  # pylint: disable=unused-argument
+    def test_get_all(self, mock_model, mock_schema, filters, mock_rt_wrapper, _mock_sqla_attrs):
         """ Test the get_all method """
         SqlaRunner.model = mock_model
         SqlaRunner.schema_list = mock_schema

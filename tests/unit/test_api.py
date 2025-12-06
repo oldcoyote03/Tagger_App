@@ -11,6 +11,9 @@ from app.api import (
     use_args_json, use_args_query, handle_request_parsing_error, abort_not_found
 )
 
+# pylint: disable=no-member
+
+
 class TestHealthcheckEndpoint:
     """ Test the healthcheck endpoint """
 
@@ -28,7 +31,7 @@ class TestServiceItemView:
     def test_get_item_found(self, mock_service, get_data):
         """ Test the get item endpoint - found"""
         test_item_id = "test_item_id"
-        response = self.client.get(url_for("example-item", item_id=test_item_id))  # pylint: disable=no-member
+        response = self.client.get(url_for("example-item", item_id=test_item_id))
         mock_service.get.assert_called_once_with(str(test_item_id))
         assert get_data(response) == mock_service.get.return_value
         assert response.status_code == 200
@@ -38,7 +41,7 @@ class TestServiceItemView:
         test_item_id = "test_item_id"
         mock_service.get.return_value = None
         expected_resp = f"{mock_service.get_name()} {test_item_id} not found"
-        response = self.client.get(url_for("example-item", item_id=test_item_id))  # pylint: disable=no-member
+        response = self.client.get(url_for("example-item", item_id=test_item_id))
         mock_service.get.assert_called_with(test_item_id)
         assert response.status_code == 404
         assert get_data(response) == expected_resp
@@ -46,7 +49,7 @@ class TestServiceItemView:
     def test_delete_item(self, mock_service, get_data):
         """ Test the delete item endpoint """
         test_item_id = "test_item_id"
-        response = self.client.delete(url_for("example-item", item_id=test_item_id))  # pylint: disable=no-member
+        response = self.client.delete(url_for("example-item", item_id=test_item_id))
         mock_service.delete.assert_called_with(test_item_id)
         assert response.status_code == 204
         assert get_data(response) == ""
@@ -57,7 +60,7 @@ class TestServiceItemView:
         mock_model = MagicMock()
         mock_model.__name__ = "Mock Model"
         mock_service.delete.side_effect = SqlaNotFound(mock_model, test_item_id)
-        response = self.client.delete(url_for("example-item", item_id=test_item_id))  # pylint: disable=no-member
+        response = self.client.delete(url_for("example-item", item_id=test_item_id))
         mock_service.delete.assert_called_with(test_item_id)
         expected_exc = f"{mock_service.get_name()} {test_item_id} not found"
         assert response.status_code == 404
@@ -72,7 +75,7 @@ class TestServiceGroupView:
         """ Test the get group endpoint """
         key = "query"
         arg = "test_query"
-        response = self.client.get(f"{url_for('example-group')}?{key}={arg}")  # pylint: disable=no-member
+        response = self.client.get(f"{url_for('example-group')}?{key}={arg}")
         mock_service.get_all.assert_called_once_with(**{key: arg})
         assert response.status_code == 200
         assert get_data(response) == mock_service.get_all.return_value
@@ -80,7 +83,7 @@ class TestServiceGroupView:
     def test_add_item(self, mock_service, get_data):
         """ Test the add item endpoint"""
         test_payload = {"json": "payload"}
-        response = self.client.post(url_for("example-group"), json=test_payload)  # pylint: disable=no-member
+        response = self.client.post(url_for("example-group"), json=test_payload)
         mock_service.model.assert_called_with(**test_payload)
         mock_service.add.assert_called_with(mock_service.model.return_value)
         assert response.status_code == 200
@@ -92,7 +95,7 @@ class TestServiceGroupView:
         """ Test the get bookmarks endpoint - found"""
         test_payload = {"json": "payload"}
         mock_service.add.side_effect = integrity_error_exc
-        response = self.client.post(url_for("example-group"), json=test_payload)  # pylint: disable=no-member
+        response = self.client.post(url_for("example-group"), json=test_payload)
         mock_service.model.assert_called_with(**test_payload)
         mock_service.add.assert_called_with(mock_service.model.return_value)
         expected_exc = f"Add {mock_service.get_name.return_value} error: {integrity_error_exc.orig}"

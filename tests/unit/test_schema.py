@@ -49,7 +49,11 @@ def test_view_database_details(mock_db_schema, mock_create_table_schema):
     ]
 )
 def test_manage_db(
-    test_input, expected, mock_db_schema, mock_app_schema, mock_make_url_schema,
+    test_input,
+    expected,
+    mock_db_schema,
+    mock_app_schema,
+    mock_make_url_schema,
     mock_view_db_details_schema
 ):
     """ Test Manage DB: Assumes calling method enforces max 1 arg as True """

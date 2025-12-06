@@ -23,7 +23,7 @@ def sqlalchemy_mock_config_fixture():
         ("example", MockData.EXAMPLE_DATA),
     ]
 
-@pytest.fixture(scope="function", name="mocked_session_wrapper")
+@pytest.fixture(scope="function", name="_mocked_session_wrapper")
 def mocked_session_wrapper_fixture(
     mocker, mocked_session, sqlalchemy_declarative_base, sqlalchemy_mock_config, log
 ):
@@ -59,7 +59,7 @@ def mocked_session_wrapper_fixture(
     mocked_session.bind.driver = mocked_session.bind.engine.driver
     return mock_session_begin
 
-@pytest.fixture(scope="function", name="mock_sessionmaker_session")
+@pytest.fixture(scope="function", name="_mock_sessionmaker_session")
 def mock_sessionmaker_session_fixture(mock_sessionmaker_services, mocked_session):
     """
     Pass in pytest-sqlalchemy-mock fixture mocked_session to sqlalchemy-cockroachdb run_transaction
@@ -68,7 +68,7 @@ def mock_sessionmaker_session_fixture(mock_sessionmaker_services, mocked_session
     return mock_sessionmaker_services
 
 @pytest.fixture
-def client_memory_class(request, client, mock_sessionmaker_session, mocked_session_wrapper):  # pylint: disable=unused-argument
+def client_memory_class(request, client, _mock_sessionmaker_session, _mocked_session_wrapper):
     """
     Set a ``client`` class attribute to current Flask test client::
 
@@ -82,7 +82,7 @@ def client_memory_class(request, client, mock_sessionmaker_session, mocked_sessi
         request.cls.client = client
 
 @pytest.fixture
-def client_example_memory(request, app, mock_sessionmaker_session, mocked_session_wrapper):  # pylint: disable=unused-argument
+def client_example_memory(request, app, _mock_sessionmaker_session, _mocked_session_wrapper):
     """ Example API """
     if request.cls is not None:
         register_api(app, ExampleService)

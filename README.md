@@ -2,9 +2,9 @@
 
 Set host IP address to make API reachable from host: [Flask Docker Error: Empty reply from server](https://www.youtube.com/watch?v=4uoWRXuYfJs)
 
-Test API with cURL
+API Health Check:
 ```
-curl -H "Content-Type: application/json" -X GET http://localhost:5000/test
+curl -H "Content-Type: application/json" -X GET http://localhost:5000/healthcheck
 ```
 
 Options for created_at field:
@@ -13,6 +13,7 @@ Options for created_at field:
 Note: Since the CREATE TABLE operation occurs before the app is run, you cannot use the server_default=sqlalchemy.sql.func.current_date since this injects the CURRENT_DATE() function into the CREATE TABLE operation (which is done already).
 
 ## TODO:
+* Set up Terraform to deploy to AWS
 * Deploy to local docker environment
 * User model
 * User auth
